@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Union Planner: Maddie & Udit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Lato', sans-serif; background-color: #fafaf9; color: #44403c; }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+        .tab-active { border-bottom: 3px solid #d97706; color: #d97706; font-weight: 700; }
+        .tab-inactive { color: #78716c; }
+        .tab-inactive:hover { color: #d97706; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; height: 300px; }
+        /* Table Styles for Vendor Research */
+        .vendor-table th { background-color: #f5f5f4; text-align: left; padding: 12px; font-weight: 600; color: #44403c; border-bottom: 2px solid #e7e5e4; }
+        .vendor-table td { padding: 12px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+        .vendor-table tr:last-child td { border-bottom: none; }
+        .tag-price { background-color: #ecfdf5; color: #047857; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+        .tag-category { background-color: #fff7ed; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <span class="text-3xl font-bold text-stone-800 tracking-tight">The Union Planner</span>
+                    <span class="ml-4 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold uppercase tracking-wide hidden sm:inline-block">Oct 13, 2026</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="sync-status" class="text-xs font-bold text-stone-400 uppercase tracking-wider">Connecting...</div>
+                    <div id="countdown" class="text-stone-500 text-sm font-medium hidden sm:block">Calculating...</div>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
+                <button onclick="window.switchTab('dashboard')" id="tab-dashboard" class="tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Dashboard
+                </button>
+                <button onclick="window.switchTab('day1')" id="tab-day1" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Day 1: Legal
+                </button>
+                <button onclick="window.switchTab('day2')" id="tab-day2" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Day 2: Culture
+                </button>
+                <button onclick="window.switchTab('day3')" id="tab-day3" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Day 3: Ceremony
+                </button>
+                <button onclick="window.switchTab('vendors')" id="tab-vendors" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Vendor Research
+                </button>
+                <button onclick="window.switchTab('tasks')" id="tab-tasks" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    Master Tasks
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow bg-stone-50 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="space-y-8 animate-fade-in">
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-4">Planning Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                        <!-- Budget Chart -->
+                        <div class="bg-stone-50 rounded-lg p-6 border border-stone-200">
+                            <h3 class="text-lg font-semibold text-stone-700 mb-4 text-center">Budget Breakdown</h3>
+                            <div class="flex justify-between text-sm mb-2 px-4">
+                                <span class="text-stone-500">Total: <b class="text-stone-800" id="disp-budget-total">$26,115</b></span>
+                                <span class="text-emerald-600">Spent: <b id="disp-budget-spent">$5,260</b></span>
+                            </div>
+                            <div class="chart-container" style="height: 250px;">
+                                <canvas id="budgetChart"></canvas>
+                            </div>
+                            <p class="text-xs text-center text-stone-500 mt-2">Sync: Upload 'Budget.csv' below to update.</p>
+                        </div>
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-lg">
+                                <h4 class="font-bold text-emerald-800">Day 1: The Signing</h4>
+                                <p class="text-sm text-emerald-700 mt-1">Status: Planning. Location decision needed. Suit selected.</p>
+                            </div>
+                            <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <h4 class="font-bold text-amber-800">Day 2: The Party</h4>
+                                <p class="text-sm text-amber-700 mt-1">Status: Logistics Heavy. <strong id="disp-guest-count">101 Guests</strong> expected.</p>
+                            </div>
+                            <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg">
+                                <h4 class="font-bold text-rose-800">Day 3: The Big Day</h4>
+                                <p class="text-sm text-rose-700 mt-1">Status: Vendor Booking. Finn's Plan Ready.</p>
+                            </div>
+                             <div class="bg-white p-4 rounded-lg border border-stone-200 mt-4">
+                                <h3 class="text-sm font-bold text-stone-800 mb-2">Completion Pulse</h3>
+                                <div class="chart-container" style="height: 150px;">
+                                    <canvas id="taskChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 1 VIEW -->
+            <div id="view-day1" class="hidden space-y-8">
+                <!-- (Content Identical to Previous Version) -->
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">Day 1: The Legal Signing</h2>
+                    <p class="text-stone-600 mb-6">Late afternoon, intimate, family-focused. The main challenge is the "Antique Table" vs. "Park Rules" conflict.</p>
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Location Strategy</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
+                                <div class="font-bold text-lg mb-2">Option A: Arboretum</div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Most Scenic</div>
+                                <p class="text-sm text-stone-600">Stunning willows and water views. Pet friendly.</p>
+                                <div class="mt-4 p-2 bg-red-50 text-red-700 text-xs rounded"><strong>Con:</strong> NO furniture allowed.</div>
+                            </div>
+                            <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
+                                <div class="font-bold text-lg mb-2">Option B: Strathcona</div>
+                                <div class="text-xs font-bold text-stone-500 uppercase mb-2">Central</div>
+                                <p class="text-sm text-stone-600">Stone ruins, central location.</p>
+                                <div class="mt-4 p-2 bg-stone-100 text-stone-700 text-xs rounded"><strong>Con:</strong> Permit required, hauling table is hard.</div>
+                            </div>
+                            <div class="border-2 border-emerald-500 rounded-lg p-5 shadow-md cursor-pointer bg-emerald-50 relative" onclick="window.highlightLocation(this)">
+                                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-xs px-2 py-1 rounded-bl">Recommended</div>
+                                <div class="font-bold text-lg mb-2">Option C: Hybrid</div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Best Balance</div>
+                                <p class="text-sm text-stone-600"><strong>Step 1:</strong> Sign at home with antique table.<br><strong>Step 2:</strong> Portraits at park with Finn.</p>
+                                <div class="mt-4 p-2 bg-emerald-100 text-emerald-800 text-xs rounded"><strong>Pro:</strong> Gets the table shot without permits.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 2 VIEW -->
+            <div id="view-day2" class="hidden space-y-8">
+                <!-- (Content Identical to Previous Version) -->
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
+                    <h2 class="text-2xl font-bold text-amber-800 mb-2">Day 2: The Culture Marathon</h2>
+                    <p class="text-stone-600 mb-6">Arnprior. Haldi (AM) + Mehendi (PM) + Sangeet (Eve).</p>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Logistics Estimator</h3>
+                        <div class="flex flex-col md:flex-row gap-8 items-start">
+                            <div class="w-full md:w-1/3">
+                                <label for="guest-slider" class="block text-sm font-medium text-stone-700 mb-2">Guest Count: <span id="guest-count-display" class="font-bold text-amber-600">101</span></label>
+                                <input type="range" id="guest-slider" min="10" max="150" value="101" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <p class="text-xs text-stone-500 mt-2">Adjust to estimate food & seating needs.</p>
+                            </div>
+                            <div class="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Chairs</div><div id="calc-chairs" class="text-xl font-bold text-stone-800">101</div></div>
+                                <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Biryani (L)</div><div id="calc-biryani" class="text-xl font-bold text-stone-800">51 L</div></div>
+                                <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Chai (Cups)</div><div id="calc-chai" class="text-xl font-bold text-stone-800">202</div></div>
+                                <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Drinks (Coolers)</div><div id="calc-coolers" class="text-xl font-bold text-stone-800">5</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 3 VIEW -->
+            <div id="view-day3" class="hidden space-y-8">
+                <!-- (Content Identical to Previous Version) -->
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
+                    <h2 class="text-2xl font-bold text-rose-800 mb-2">Day 3: The Big Day</h2>
+                    <p class="text-stone-600 mb-6">October 13th, 2026. Le Belvédère, Wakefield QC.</p>
+                    <div class="bg-stone-100 border border-stone-300 p-6 rounded-lg mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-stone-800">🐕 Finn's Care Protocol</h3>
+                            <span class="bg-stone-800 text-white text-xs px-2 py-1 rounded">Role: Ring Bearer</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold text-stone-700 text-sm mb-2 uppercase">Checklist</h4>
+                                <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
+                                    <li><strong>Handler:</strong> [Insert Name]</li>
+                                    <li><strong>Outfit:</strong> Tuxedo, Bandana, Wreath.</li>
+                                    <li><strong>Golden Rule:</strong> No jumping on Maddie's dress!</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-stone-700 text-sm mb-2 uppercase">Timeline & Cues</h4>
+                                <ul class="text-sm text-stone-600 space-y-2">
+                                    <li class="flex justify-between"><span>Potty "Last Call":</span> <span class="font-bold text-red-600">20 mins before</span></li>
+                                    <li class="flex justify-between"><span>Aisle Side:</span> <span class="font-bold">Left side of handler</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CRITICAL DEADLINE SECTION -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r">
+                                <h3 class="font-bold text-red-800">🚨 Critical Deadline</h3>
+                                <p class="text-sm text-red-700 mt-1">
+                                    Christine visits Ottawa on <strong>January 7th, 2026</strong>. Maddie MUST make the <strong>Paper Flower Invite</strong> before then.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW VENDOR RESEARCH VIEW -->
+            <div id="view-vendors" class="hidden space-y-8">
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-6">Vendor Research & Estimates</h2>
+                    <p class="text-sm text-stone-500 mb-6">Prices are estimates for Ottawa/Wakefield 2025/2026 weddings. "Booked" items are based on your uploaded CSVs.</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-stone-600 vendor-table">
+                            <thead class="text-xs text-stone-700 uppercase bg-stone-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Vendor Option</th>
+                                    <th scope="col" class="px-6 py-3">Est. Price Range</th>
+                                    <th scope="col" class="px-6 py-3">Notes / Vibe</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Venue (Booked) -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Venue</span></td>
+                                    <td class="font-medium text-stone-900">Le Belvédère</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$20,000+</span></td>
+                                    <td class="px-6 py-4">Wakefield, QC. Includes food/drink minimums usually.</td>
+                                    <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded">BOOKED</span></td>
+                                </tr>
+                                <!-- Dog Care (Booked) -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Pet Care</span></td>
+                                    <td class="font-medium text-stone-900">I Do Doggy</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$400 - $600</span></td>
+                                    <td class="px-6 py-4">For Finn. Includes transport & handling during ceremony.</td>
+                                    <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded">BOOKED</span></td>
+                                </tr>
+                                <!-- Photography -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
+                                    <td class="font-medium text-stone-900">Union Eleven</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$4,500 - $6,500</span></td>
+                                    <td class="px-6 py-4">Documentary style. Very experienced with Le Belvédère.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
+                                    <td class="font-medium text-stone-900">Agathe Bernard</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$3,800 - $5,200</span></td>
+                                    <td class="px-6 py-4">Adventurous/Outdoor focus. Great for cliffside shots.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
+                                    <td class="font-medium text-stone-900">Grey Loft Studio</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$3,000 - $4,500</span></td>
+                                    <td class="px-6 py-4">Light, airy, romantic. Good value.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <!-- Hair & Makeup -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
+                                    <td class="font-medium text-stone-900">One Fine Beauty</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$150 - $250 / person</span></td>
+                                    <td class="px-6 py-4">Mobile team. Good for large groups (10 women). Natural look.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
+                                    <td class="font-medium text-stone-900">Klava Z</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$200 - $300 / person</span></td>
+                                    <td class="px-6 py-4">Premium/Fashion focus. Very durable makeup.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <!-- Catering (Indian) -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
+                                    <td class="font-medium text-stone-900">Host India</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$25 - $40 / person</span></td>
+                                    <td class="px-6 py-4">Reliable bulk Punjabi food (Butter Chicken/Biryani).</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
+                                    <td class="font-medium text-stone-900">Coconut Lagoon</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$45 - $65 / person</span></td>
+                                    <td class="px-6 py-4">Elevated South Indian (Kerala style). Award winning.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <!-- Henna -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Henna</span></td>
+                                    <td class="font-medium text-stone-900">Ottawa Henna (Safina)</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$300 - $500 (Bridal)</span></td>
+                                    <td class="px-6 py-4">$75/hr for guests. Fast & intricate.</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                                <!-- Transport -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Transport</span></td>
+                                    <td class="font-medium text-stone-900">Lady Dive / 417 Bus</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$1,200 - $1,800</span></td>
+                                    <td class="px-6 py-4">School bus or Coach shuttle (Ottawa <-> Wakefield).</td>
+                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TASKS VIEW -->
+            <div id="view-tasks" class="hidden h-full">
+                <!-- (Content Identical to Previous Version) -->
+                <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100 h-full flex flex-col">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-6">Master To-Do List</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow overflow-hidden">
+                        <div class="flex flex-col bg-stone-50 rounded-lg p-4 border border-stone-200">
+                            <h3 class="font-bold text-stone-700 mb-3 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> Udit</h3>
+                            <div class="space-y-2 overflow-y-auto task-scroll pr-2" id="list-udit"></div>
+                        </div>
+                        <div class="flex flex-col bg-stone-50 rounded-lg p-4 border border-stone-200">
+                            <h3 class="font-bold text-stone-700 mb-3 flex items-center"><span class="w-2 h-2 rounded-full bg-rose-500 mr-2"></span> Maddie</h3>
+                            <div class="space-y-2 overflow-y-auto task-scroll pr-2" id="list-maddie"></div>
+                        </div>
+                        <div class="flex flex-col bg-stone-50 rounded-lg p-4 border border-stone-200">
+                            <h3 class="font-bold text-stone-700 mb-3 flex items-center"><span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span> Joint</h3>
+                            <div class="space-y-2 overflow-y-auto task-scroll pr-2" id="list-joint"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-stone-200 mt-auto py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm text-stone-500 flex flex-col md:flex-row justify-between items-center">
+            <p>&copy; The Union Planner. Happy Planning!</p>
+            <div class="mt-4 md:mt-0 flex items-center space-x-2">
+                <input type="file" id="csvInput" accept=".csv" multiple class="hidden" onchange="window.handleCsvUpload(this.files)">
+                <button onclick="document.getElementById('csvInput').click()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2 px-4 rounded flex items-center transition">
+                    <span class="mr-2">📂</span> Update from Excel
+                </button>
+                <span id="upload-status" class="text-xs text-stone-400 italic">Supports: Guests.csv, Budget.csv, Checklist.csv</span>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+        // CONFIG (From User)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAB26VzYGdY6Wdm3W6gO4jGdo8Tka-zbTE",
+            authDomain: "wedding-website-b8c66.firebaseapp.com",
+            projectId: "wedding-website-b8c66",
+            storageBucket: "wedding-website-b8c66.firebasestorage.app",
+            messagingSenderId: "198323812504",
+            appId: "1:198323812504:web:c6b7096d3d327300bb78ed"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        // References
+        const PLANNER_DOC_ID = "main_plan";
+        const docRef = doc(db, "wedding_planner", PLANNER_DOC_ID);
+        const syncStatusEl = document.getElementById('sync-status');
+
+        // Initial Default Data
+        const defaultData = {
+            tasks: {
+                udit: [
+                    { id: 'u1', text: "Select Dates (Checklist.csv)", done: true },
+                    { id: 'u2', text: "Set Budget (Checklist.csv)", done: true },
+                    { id: 'u3', text: "Buy Tan Suit", done: false },
+                    { id: 'u4', text: "Research rental dance floor prices", done: false },
+                    { id: 'u5', text: "Ask Arie about Mandap & Card Box build", done: false },
+                    { id: 'u6', text: "Measure Antique Table (Fit in SUV?)", done: false }
+                ],
+                maddie: [
+                    { id: 'm1', text: "Discuss Wedding Vision (Checklist.csv)", done: true },
+                    { id: 'm2', text: "Make Paper Flower Invite for Christine (Before Jan 7th)", done: false },
+                    { id: 'm3', text: "Dress Hunt (Civil ceremony)", done: false },
+                    { id: 'm4', text: "Create Henna Guest List (Categorized)", done: false },
+                    { id: 'm5', text: "Decide: Table at Park vs Home Signing", done: false }
+                ],
+                joint: [
+                    { id: 'j1', text: "Draft Guest List (Guests.csv - Done 101)", done: true },
+                    { id: 'j2', text: "Research Venues (Le Belvedere - Booked)", done: true },
+                    { id: 'j3', text: "Book Day 1 Meal (Patio/Finn friendly)", done: false },
+                    { id: 'j4', text: "Finalize Day 2 Venue", done: false },
+                    { id: 'j5', text: "Check Finn's Handler contract hours", done: false },
+                    { id: 'j6', text: "Stockpile firewood", done: false }
+                ]
+            },
+            guestCount: 101,
+            budget: { total: 26115, spent: 5260 }
+        };
+
+        // GLOBAL STATE
+        let currentState = defaultData;
+
+        // --- DOM ELEMENTS ---
+        const views = {
+            dashboard: document.getElementById('view-dashboard'),
+            day1: document.getElementById('view-day1'),
+            day2: document.getElementById('view-day2'),
+            day3: document.getElementById('view-day3'),
+            vendors: document.getElementById('view-vendors'),
+            tasks: document.getElementById('view-tasks')
+        };
+        const tabs = {
+            dashboard: document.getElementById('tab-dashboard'),
+            day1: document.getElementById('tab-day1'),
+            day2: document.getElementById('tab-day2'),
+            day3: document.getElementById('tab-day3'),
+            vendors: document.getElementById('tab-vendors'),
+            tasks: document.getElementById('tab-tasks')
+        };
+        const countdownEl = document.getElementById('countdown');
+        const guestSlider = document.getElementById('guest-slider');
+
+        // --- CHART INSTANCES ---
+        let taskChartInstance = null;
+        let photoChartInstance = null;
+        let budgetChartInstance = null;
+
+        // --- FIREBASE LOGIC ---
+
+        // 1. AUTHENTICATE FIRST
+        syncStatusEl.innerText = "Authenticating...";
+        
+        signInAnonymously(auth).then(() => {
+            console.log("User signed in anonymously");
+            syncStatusEl.innerText = "Connecting...";
+            
+            // 2. LISTEN FOR UPDATES (Only after Auth)
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    currentState = docSnap.data();
+                    if(!currentState.budget) currentState.budget = {total: 26115, spent: 5260};
+                    
+                    syncStatusEl.innerText = "Synced";
+                    syncStatusEl.classList.remove('text-stone-400');
+                    syncStatusEl.classList.add('text-emerald-500');
+                } else {
+                    setDoc(docRef, defaultData);
+                    currentState = defaultData;
+                    syncStatusEl.innerText = "Synced (New)";
+                    syncStatusEl.classList.remove('text-stone-400');
+                    syncStatusEl.classList.add('text-emerald-500');
+                }
+                renderApp();
+            }, (error) => {
+                console.error("Firebase Snapshot Error:", error);
+                if (error.code === 'permission-denied') {
+                    syncStatusEl.innerText = "Permission Denied (Check Console Rules)";
+                } else {
+                    syncStatusEl.innerText = "Sync Error";
+                }
+                syncStatusEl.classList.add('text-red-500');
+            });
+
+        }).catch((error) => {
+            console.error("Auth Error:", error);
+            syncStatusEl.innerText = "Auth Failed";
+            syncStatusEl.classList.add('text-red-500');
+        });
+
+
+        // 3. SAVE FUNCTIONS
+        async function saveTasksToFirebase() {
+            syncStatusEl.innerText = "Saving...";
+            syncStatusEl.classList.remove('text-emerald-500');
+            syncStatusEl.classList.add('text-amber-500');
+            try {
+                await updateDoc(docRef, { tasks: currentState.tasks });
+            } catch (e) {
+                console.error("Error saving tasks", e);
+            }
+        }
+
+        async function saveGuestCountToFirebase() {
+            syncStatusEl.innerText = "Saving...";
+            try {
+                await updateDoc(docRef, { guestCount: currentState.guestCount });
+            } catch (e) {
+                console.error("Error saving guests", e);
+            }
+        }
+
+        async function saveBudgetToFirebase() {
+            syncStatusEl.innerText = "Saving...";
+            try {
+                await updateDoc(docRef, { budget: currentState.budget });
+            } catch (e) {
+                console.error("Error saving budget", e);
+            }
+        }
+
+        // --- EXCEL SYNC LOGIC ---
+        window.handleCsvUpload = function(files) {
+            if (!files.length) return;
+            const statusEl = document.getElementById('upload-status');
+            statusEl.innerText = `Processing ${files.length} files...`;
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    if (file.name.includes("Guests")) {
+                        try {
+                            const lines = text.split('\n');
+                            let count = 0;
+                            lines.forEach(line => {
+                                if (line.toUpperCase().includes("TOTAL GUESTS")) {
+                                    const matches = line.match(/\d+/);
+                                    if (matches) count = parseInt(matches[0]);
+                                }
+                            });
+                            if (count > 0) {
+                                currentState.guestCount = count;
+                                saveGuestCountToFirebase();
+                                statusEl.innerText = `Updated Guests to ${count}`;
+                            }
+                        } catch (err) { console.error("Guest parse error", err); }
+                    }
+                    if (file.name.includes("Budget")) {
+                        try {
+                            const lines = text.split('\n');
+                            let total = 0;
+                            let spent = 0;
+                            lines.forEach(line => {
+                                if (line.includes("Total Budget")) {
+                                    const raw = line.split(',')[2] || ""; 
+                                    total = parseInt(raw.replace(/[^0-9]/g, '')) || 0;
+                                }
+                                if (line.includes("TOTAL SPENT")) {
+                                    const matches = line.match(/\$[0-9,]+/);
+                                    if(matches) spent = parseInt(matches[0].replace(/[^0-9]/g, '')) || 0;
+                                }
+                            });
+                            if (total > 0) {
+                                currentState.budget = { total, spent };
+                                saveBudgetToFirebase();
+                                statusEl.innerText = `Updated Budget: $${spent} / $${total}`;
+                            }
+                        } catch (err) { console.error("Budget parse error", err); }
+                    }
+                };
+                reader.readAsText(file);
+            });
+        };
+
+        // --- UI RENDER LOGIC ---
+        function renderApp() {
+            if (document.activeElement !== guestSlider) {
+                guestSlider.value = currentState.guestCount;
+            }
+            updateLogisticsUI();
+            if (currentState.budget) {
+                document.getElementById('disp-budget-total').innerText = `$${currentState.budget.total.toLocaleString()}`;
+                document.getElementById('disp-budget-spent').innerText = `$${currentState.budget.spent.toLocaleString()}`;
+            }
+            renderTasks();
+            updateCharts();
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCountdown();
+            setInterval(updateCountdown, 60000);
+            initTaskChart();
+            initPhotoChart();
+            initBudgetChart();
+
+            guestSlider.addEventListener('input', () => {
+                currentState.guestCount = parseInt(guestSlider.value);
+                updateLogisticsUI(); 
+            });
+            guestSlider.addEventListener('change', () => {
+                saveGuestCountToFirebase();
+            });
+        });
+
+        // --- GLOBAL FUNCTIONS ---
+        window.switchTab = function(viewName) {
+            Object.values(views).forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('animate-fade-in');
+            });
+            Object.values(tabs).forEach(el => {
+                el.classList.remove('tab-active', 'border-amber-500', 'text-amber-600');
+                el.classList.add('tab-inactive', 'border-transparent');
+            });
+            views[viewName].classList.remove('hidden');
+            views[viewName].classList.add('animate-fade-in');
+            tabs[viewName].classList.remove('tab-inactive', 'border-transparent');
+            tabs[viewName].classList.add('tab-active', 'border-amber-500', 'text-amber-600');
+
+            if (viewName === 'dashboard') {
+                if(taskChartInstance) taskChartInstance.resize();
+                if(budgetChartInstance) budgetChartInstance.resize();
+            }
+            if (viewName === 'day1' && photoChartInstance) photoChartInstance.resize();
+        };
+
+        window.highlightLocation = function(el) {
+            const parent = el.parentElement;
+            Array.from(parent.children).forEach(child => {
+                child.classList.remove('border-emerald-500', 'bg-emerald-50', 'ring-2', 'ring-emerald-200');
+                child.classList.add('border-stone-200', 'bg-white');
+            });
+            el.classList.remove('border-stone-200', 'bg-white');
+            el.classList.add('border-emerald-500', 'bg-emerald-50', 'ring-2', 'ring-emerald-200');
+        };
+
+        window.toggleHenna = function(option) {
+            const btnSame = document.getElementById('btn-henna-same');
+            const btnBefore = document.getElementById('btn-henna-before');
+
+            if (option === 'same') {
+                btnSame.classList.add('border-2', 'border-amber-600', 'bg-amber-100', 'shadow-sm');
+                btnSame.classList.remove('border', 'border-amber-300', 'bg-white');
+                btnBefore.classList.add('border', 'border-amber-300', 'bg-white');
+                btnBefore.classList.remove('border-2', 'border-amber-600', 'bg-amber-100', 'shadow-sm');
+            } else {
+                btnBefore.classList.add('border-2', 'border-amber-600', 'bg-amber-100', 'shadow-sm');
+                btnBefore.classList.remove('border', 'border-amber-300', 'bg-white');
+                btnSame.classList.add('border', 'border-amber-300', 'bg-white');
+                btnSame.classList.remove('border-2', 'border-amber-600', 'bg-amber-100', 'shadow-sm');
+            }
+        };
+
+        // --- HELPER LOGIC ---
+        function updateLogisticsUI() {
+            const count = currentState.guestCount;
+            document.getElementById('guest-count-display').innerText = count;
+            document.getElementById('calc-chairs').innerText = count;
+            document.getElementById('calc-biryani').innerText = `${Math.ceil(count * 0.5)} L`;
+            document.getElementById('calc-chai').innerText = count * 2;
+            document.getElementById('calc-coolers').innerText = Math.ceil(count / 25);
+        }
+
+        function renderTasks() {
+            renderTaskList('udit', 'list-udit');
+            renderTaskList('maddie', 'list-maddie');
+            renderTaskList('joint', 'list-joint');
+        }
+
+        function renderTaskList(owner, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            currentState.tasks[owner].forEach((task, index) => {
+                const div = document.createElement('div');
+                div.className = "flex items-start p-2 rounded hover:bg-stone-100 transition";
+                const checkbox = document.createElement('input');
+                checkbox.type = "checkbox";
+                checkbox.className = "mt-1 mr-2 cursor-pointer";
+                checkbox.checked = task.done;
+                checkbox.onchange = () => {
+                    currentState.tasks[owner][index].done = checkbox.checked;
+                    saveTasksToFirebase();
+                };
+                const span = document.createElement('span');
+                span.className = `text-sm text-stone-700 ${task.done ? 'line-through text-stone-400' : ''}`;
+                span.innerText = task.text;
+                div.appendChild(checkbox);
+                div.appendChild(span);
+                container.appendChild(div);
+            });
+        }
+
+        function updateCharts() {
+            if (taskChartInstance) {
+                const uDone = currentState.tasks.udit.filter(t => t.done).length;
+                const uTotal = currentState.tasks.udit.length;
+                const mDone = currentState.tasks.maddie.filter(t => t.done).length;
+                const mTotal = currentState.tasks.maddie.length;
+                const jDone = currentState.tasks.joint.filter(t => t.done).length;
+                const jTotal = currentState.tasks.joint.length;
+                taskChartInstance.data.datasets[0].data = [uTotal - uDone, uDone, mTotal - mDone, mDone, jTotal - jDone, jDone];
+                taskChartInstance.update();
+            }
+            if (budgetChartInstance && currentState.budget) {
+                budgetChartInstance.data.datasets[0].data = [currentState.budget.total, currentState.budget.spent];
+                budgetChartInstance.update();
+            }
+        }
+
+        function updateCountdown() {
+            const weddingDate = new Date('2026-10-13T00:00:00');
+            const now = new Date();
+            const diff = weddingDate - now;
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                countdownEl.innerText = `${days} Days to go!`;
+            } else {
+                countdownEl.innerText = "The Big Day is here!";
+            }
+        }
+
+        // --- CHART CONFIG ---
+        function initTaskChart() {
+            const ctx = document.getElementById('taskChart').getContext('2d');
+            taskChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Udit Todo', 'Udit Done', 'Maddie Todo', 'Maddie Done', 'Joint Todo', 'Joint Done'],
+                    datasets: [{
+                        data: [1,0,1,0,1,0], 
+                        backgroundColor: ['#bfdbfe', '#3b82f6', '#fecdd3', '#f43f5e', '#fde68a', '#f59e0b'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function initPhotoChart() {
+            const ctx = document.getElementById('photoChart').getContext('2d');
+            photoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Cost ($)', 'Reliability (1-10)', 'Relaxation (1-10)'],
+                    datasets: [
+                        { label: 'Friends (Addy/Ashley)', data: [0, 5, 2], backgroundColor: '#fbbf24' },
+                        { label: 'Pros (Hired)', data: [1500, 10, 10], backgroundColor: '#10b981' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function initBudgetChart() {
+             const ctx = document.getElementById('budgetChart').getContext('2d');
+             budgetChartInstance = new Chart(ctx, {
+                 type: 'bar',
+                 data: {
+                     labels: ['Budget', 'Spent'],
+                     datasets: [{
+                         label: 'Amount ($)',
+                         data: [26115, 5260],
+                         backgroundColor: ['#e5e7eb', '#10b981'],
+                         borderRadius: 4
+                     }]
+                 },
+                 options: {
+                     indexAxis: 'y',
+                     responsive: true,
+                     maintainAspectRatio: false,
+                     scales: {
+                         x: { beginAtZero: true, max: 30000 }
+                     }
+                 }
+             });
+        }
+    </script>
+</body>
+</html>
