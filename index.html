@@ -20,9 +20,25 @@
         .vendor-table tr:last-child td { border-bottom: none; }
         .tag-price { background-color: #ecfdf5; color: #047857; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
         .tag-category { background-color: #fff7ed; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+        
+        /* PASSWORD OVERLAY STYLES */
+        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fafaf9; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .auth-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; border: 1px solid #e7e5e4; }
+        .hidden-auth { display: none !important; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
+
+    <!-- PASSWORD PROTECTION OVERLAY -->
+    <div id="auth-overlay">
+        <div class="auth-box">
+            <h2 class="text-2xl font-bold text-stone-800 mb-2 font-serif">The Union Planner</h2>
+            <p class="text-stone-500 mb-6 text-sm">Please enter the password to access.</p>
+            <input type="password" id="password-input" class="w-full p-3 border border-stone-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Enter Password">
+            <button onclick="checkPassword()" class="w-full bg-amber-600 text-white font-bold py-3 rounded hover:bg-amber-700 transition">Unlock Planner</button>
+            <p id="auth-error" class="text-red-500 text-xs mt-3 hidden">Incorrect password. Please try again.</p>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
@@ -267,6 +283,20 @@
                                 </tr>
                                 <!-- Hair & Makeup -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Hair</span></td>
+                                    <td class="font-medium text-stone-900">Kailey (Salon)</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$1,100 (5 ppl)</span></td>
+                                    <td class="px-6 py-4">Includes 20% discount if done at salon. Travel fee applies if mobile.</td>
+                                    <td class="px-6 py-4"><span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">QUOTE RECD</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Makeup</span></td>
+                                    <td class="font-medium text-stone-900">Kailey (Team)</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$1,400 (5 ppl)</span></td>
+                                    <td class="px-6 py-4">Rate for 5 people.</td>
+                                    <td class="px-6 py-4"><span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">QUOTE RECD</span></td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
                                     <td class="font-medium text-stone-900">One Fine Beauty</td>
                                     <td class="px-6 py-4"><span class="tag-price">$150 - $250 / person</span></td>
@@ -359,6 +389,25 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+        // PASSWORD LOGIC
+        window.checkPassword = function() {
+            const input = document.getElementById('password-input').value;
+            const overlay = document.getElementById('auth-overlay');
+            const errorMsg = document.getElementById('auth-error');
+            
+            if(input === "wedding2026") { // SET PASSWORD HERE
+                overlay.classList.add('hidden-auth');
+                localStorage.setItem('planner_auth', 'true');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        };
+
+        // Check Previous Auth
+        if(localStorage.getItem('planner_auth') === 'true') {
+            document.getElementById('auth-overlay').classList.add('hidden-auth');
+        }
 
         // CONFIG (From User)
         const firebaseConfig = {
