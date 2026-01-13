@@ -16,11 +16,21 @@
         .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; height: 300px; }
         /* Table Styles for Vendor Research */
         .vendor-table th { background-color: #f5f5f4; text-align: left; padding: 12px; font-weight: 600; color: #44403c; border-bottom: 2px solid #e7e5e4; }
-        .vendor-table td { padding: 12px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+        .vendor-table td { padding: 12px; border-bottom: 1px solid #e7e5e4; vertical-align: middle; }
         .vendor-table tr:last-child td { border-bottom: none; }
         .tag-price { background-color: #ecfdf5; color: #047857; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
         .tag-category { background-color: #fff7ed; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
         
+        /* Status Dropdown Styling */
+        .status-select { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; border: 1px solid transparent; cursor: pointer; text-transform: uppercase; }
+        .status-select:focus { outline: none; border-color: #a8a29e; }
+        /* Dynamic Status Colors */
+        .status-researching { background-color: #f5f5f4; color: #78716c; }
+        .status-contacted { background-color: #e0f2fe; color: #0369a1; }
+        .status-quote { background-color: #fff7ed; color: #c2410c; }
+        .status-selected { background-color: #dcfce7; color: #15803d; }
+        .status-booked { background-color: #15803d; color: white; }
+
         /* PASSWORD OVERLAY STYLES */
         #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fafaf9; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .auth-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; border: 1px solid #e7e5e4; }
@@ -249,7 +259,15 @@
                                     <td class="font-medium text-stone-900">Le Belvédère</td>
                                     <td class="px-6 py-4"><span class="tag-price">$20,000+</span></td>
                                     <td class="px-6 py-4">Wakefield, QC. Includes food/drink minimums usually.</td>
-                                    <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded">BOOKED</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
+                                            <option value="researching">Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked" selected>Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Dog Care (Booked) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
@@ -257,29 +275,61 @@
                                     <td class="font-medium text-stone-900">I Do Doggy</td>
                                     <td class="px-6 py-4"><span class="tag-price">$400 - $600</span></td>
                                     <td class="px-6 py-4">For Finn. Includes transport & handling during ceremony.</td>
-                                    <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded">BOOKED</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
+                                            <option value="researching">Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked" selected>Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Photography -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
                                     <td class="font-medium text-stone-900">Union Eleven</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$4,500 - $6,500</span></td>
+                                    <td class="px-6 py-4"><span class="tag-price">$7,000 + Tax</span></td>
                                     <td class="px-6 py-4">Documentary style. Very experienced with Le Belvédère.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-selected" onchange="window.updateStatusColor(this)">
+                                            <option value="researching">Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected" selected>Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
                                     <td class="font-medium text-stone-900">Agathe Bernard</td>
                                     <td class="px-6 py-4"><span class="tag-price">$3,800 - $5,200</span></td>
                                     <td class="px-6 py-4">Adventurous/Outdoor focus. Great for cliffside shots.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
                                     <td class="font-medium text-stone-900">Grey Loft Studio</td>
                                     <td class="px-6 py-4"><span class="tag-price">$3,000 - $4,500</span></td>
                                     <td class="px-6 py-4">Light, airy, romantic. Good value.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Hair & Makeup -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
@@ -287,28 +337,60 @@
                                     <td class="font-medium text-stone-900">Kailey (Salon)</td>
                                     <td class="px-6 py-4"><span class="tag-price">$1,100 (5 ppl)</span></td>
                                     <td class="px-6 py-4">Includes 20% discount if done at salon. Travel fee applies if mobile.</td>
-                                    <td class="px-6 py-4"><span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">QUOTE RECD</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-quote" onchange="window.updateStatusColor(this)">
+                                            <option value="researching">Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote" selected>Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Makeup</span></td>
                                     <td class="font-medium text-stone-900">Kailey (Team)</td>
                                     <td class="px-6 py-4"><span class="tag-price">$1,400 (5 ppl)</span></td>
                                     <td class="px-6 py-4">Rate for 5 people.</td>
-                                    <td class="px-6 py-4"><span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">QUOTE RECD</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-quote" onchange="window.updateStatusColor(this)">
+                                            <option value="researching">Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote" selected>Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
                                     <td class="font-medium text-stone-900">One Fine Beauty</td>
                                     <td class="px-6 py-4"><span class="tag-price">$150 - $250 / person</span></td>
                                     <td class="px-6 py-4">Mobile team. Good for large groups (10 women). Natural look.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
                                     <td class="font-medium text-stone-900">Klava Z</td>
                                     <td class="px-6 py-4"><span class="tag-price">$200 - $300 / person</span></td>
                                     <td class="px-6 py-4">Premium/Fashion focus. Very durable makeup.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Catering (Indian) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
@@ -316,14 +398,30 @@
                                     <td class="font-medium text-stone-900">Host India</td>
                                     <td class="px-6 py-4"><span class="tag-price">$25 - $40 / person</span></td>
                                     <td class="px-6 py-4">Reliable bulk Punjabi food (Butter Chicken/Biryani).</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
                                     <td class="font-medium text-stone-900">Coconut Lagoon</td>
                                     <td class="px-6 py-4"><span class="tag-price">$45 - $65 / person</span></td>
                                     <td class="px-6 py-4">Elevated South Indian (Kerala style). Award winning.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Henna -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
@@ -331,7 +429,15 @@
                                     <td class="font-medium text-stone-900">Ottawa Henna (Safina)</td>
                                     <td class="px-6 py-4"><span class="tag-price">$300 - $500 (Bridal)</span></td>
                                     <td class="px-6 py-4">$75/hr for guests. Fast & intricate.</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <!-- Transport -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
@@ -339,7 +445,15 @@
                                     <td class="font-medium text-stone-900">Lady Dive / 417 Bus</td>
                                     <td class="px-6 py-4"><span class="tag-price">$1,200 - $1,800</span></td>
                                     <td class="px-6 py-4">School bus or Coach shuttle (Ottawa <-> Wakefield).</td>
-                                    <td class="px-6 py-4"><span class="bg-stone-200 text-stone-600 text-xs font-bold px-2 py-1 rounded">Researching</span></td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -408,6 +522,17 @@
         if(localStorage.getItem('planner_auth') === 'true') {
             document.getElementById('auth-overlay').classList.add('hidden-auth');
         }
+
+        // VENDOR STATUS UPDATE LOGIC
+        window.updateStatusColor = function(select) {
+            select.className = 'status-select'; // Reset base class
+            const val = select.value;
+            if(val === 'researching') select.classList.add('status-researching');
+            else if(val === 'contacted') select.classList.add('status-contacted');
+            else if(val === 'quote') select.classList.add('status-quote');
+            else if(val === 'selected') select.classList.add('status-selected');
+            else if(val === 'booked') select.classList.add('status-booked');
+        };
 
         // CONFIG (From User)
         const firebaseConfig = {
