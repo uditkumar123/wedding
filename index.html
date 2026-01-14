@@ -231,15 +231,29 @@
                     </div>
 
                     <div class="mb-8">
-                        <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Logistics Estimator</h3>
+                        <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Logistics & Rentals</h3>
                         <div class="flex flex-col md:flex-row gap-8 items-start">
                             <div class="w-full md:w-1/3">
                                 <label for="guest-slider" class="block text-sm font-medium text-stone-700 mb-2">Guest Count: <span id="guest-count-display" class="font-bold text-amber-600">101</span></label>
                                 <input type="range" id="guest-slider" min="10" max="150" value="101" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-amber-600">
                                 <p class="text-xs text-stone-500 mt-2">Adjust to estimate food & seating needs.</p>
                             </div>
-                            <div class="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Chairs</div><div id="calc-chairs" class="text-xl font-bold text-stone-800">101</div></div>
+                            <div class="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div class="bg-stone-50 p-3 rounded border text-center">
+                                    <div class="text-xs text-stone-500 uppercase">Chairs</div>
+                                    <div id="calc-chairs" class="text-xl font-bold text-stone-800">111</div>
+                                    <div class="text-xs text-stone-400 mt-1">(Count + 10)</div>
+                                </div>
+                                <div class="bg-stone-50 p-3 rounded border text-center">
+                                    <div class="text-xs text-stone-500 uppercase">Round Tables</div>
+                                    <div id="calc-tables" class="text-xl font-bold text-stone-800">11</div>
+                                    <div class="text-xs text-stone-400 mt-1">(10 per table)</div>
+                                </div>
+                                <div class="bg-stone-50 p-3 rounded border text-center">
+                                    <div class="text-xs text-stone-500 uppercase">Buffet/Gift Tables</div>
+                                    <div class="text-xl font-bold text-stone-800">4-5</div>
+                                    <div class="text-xs text-stone-400 mt-1">(Rectangular)</div>
+                                </div>
                                 <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Biryani (L)</div><div id="calc-biryani" class="text-xl font-bold text-stone-800">51 L</div></div>
                                 <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Chai (Cups)</div><div id="calc-chai" class="text-xl font-bold text-stone-800">202</div></div>
                                 <div class="bg-stone-50 p-3 rounded border text-center"><div class="text-xs text-stone-500 uppercase">Drinks (Coolers)</div><div id="calc-coolers" class="text-xl font-bold text-stone-800">5</div></div>
@@ -882,7 +896,8 @@
         function updateLogisticsUI() {
             const count = currentState.guestCount;
             document.getElementById('guest-count-display').innerText = count;
-            document.getElementById('calc-chairs').innerText = count;
+            document.getElementById('calc-chairs').innerText = count + 10;
+            document.getElementById('calc-tables').innerText = Math.ceil(count / 10);
             document.getElementById('calc-biryani').innerText = `${Math.ceil(count * 0.5)} L`;
             document.getElementById('calc-chai').innerText = count * 2;
             document.getElementById('calc-coolers').innerText = Math.ceil(count / 25);
