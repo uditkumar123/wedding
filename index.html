@@ -139,27 +139,70 @@
                 <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
                     <h2 class="text-2xl font-bold text-stone-800 mb-2">Day 1: The Legal Signing</h2>
                     <p class="text-stone-600 mb-6">Late afternoon, intimate, family-focused. The main challenge is the "Antique Table" vs. "Park Rules" conflict.</p>
+                    
+                    <!-- NEW: Legal & Admin Card -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r mb-8">
+                        <h3 class="font-bold text-blue-800">📜 Legal & Admin</h3>
+                        <div class="text-sm text-blue-700 mt-2 space-y-1">
+                            <p><strong>Officiant:</strong> Catherine Walter / Merry Fairy (Confirmed?)</p>
+                            <p><strong>Package:</strong> $450 + HST (Elopement Pkg)</p>
+                            <p><strong>Retainer:</strong> $100 due to book.</p>
+                            <p><strong>Travel Fee:</strong> +$120-130 if in Arnprior (vs Ottawa).</p>
+                            <p class="mt-2 font-bold text-red-600">⚠️ Deadline: Apply for Marriage License within 3 months of the wedding date.</p>
+                        </div>
+                    </div>
+
                     <div class="mb-10">
                         <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Location Strategy</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Option A: Ornamental Park -->
                             <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
-                                <div class="font-bold text-lg mb-2">Option A: Arboretum</div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Most Scenic</div>
-                                <p class="text-sm text-stone-600">Stunning willows and water views. Pet friendly.</p>
-                                <div class="mt-4 p-2 bg-red-50 text-red-700 text-xs rounded"><strong>Con:</strong> NO furniture allowed.</div>
+                                <div class="font-bold text-lg mb-2">Ornamental Gardens (Farm)</div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Best for Photos</div>
+                                <p class="text-sm text-stone-600">Beautiful floral backdrops. Very scenic.</p>
+                                <div class="mt-4 p-2 bg-stone-100 text-stone-700 text-xs rounded"><strong>Limit:</strong> Max 20 people allowed.</div>
                             </div>
+                            <!-- Option B: Heart Island / Major's Hill -->
                             <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
-                                <div class="font-bold text-lg mb-2">Option B: Strathcona</div>
-                                <div class="text-xs font-bold text-stone-500 uppercase mb-2">Central</div>
-                                <p class="text-sm text-stone-600">Stone ruins, central location.</p>
-                                <div class="mt-4 p-2 bg-stone-100 text-stone-700 text-xs rounded"><strong>Con:</strong> Permit required, hauling table is hard.</div>
+                                <div class="font-bold text-lg mb-2">Heart Island / Major's Hill</div>
+                                <div class="text-xs font-bold text-stone-500 uppercase mb-2">Central & Iconic</div>
+                                <p class="text-sm text-stone-600">Classic Ottawa views (Parliament/River).</p>
+                                <div class="mt-4 p-2 bg-stone-100 text-stone-700 text-xs rounded"><strong>Note:</strong> Public spaces, might be busy.</div>
                             </div>
-                            <div class="border-2 border-emerald-500 rounded-lg p-5 shadow-md cursor-pointer bg-emerald-50 relative" onclick="window.highlightLocation(this)">
-                                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-xs px-2 py-1 rounded-bl">Recommended</div>
-                                <div class="font-bold text-lg mb-2">Option C: Hybrid</div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Best Balance</div>
-                                <p class="text-sm text-stone-600"><strong>Step 1:</strong> Sign at home with antique table.<br><strong>Step 2:</strong> Portraits at park with Finn.</p>
-                                <div class="mt-4 p-2 bg-emerald-100 text-emerald-800 text-xs rounded"><strong>Pro:</strong> Gets the table shot without permits.</div>
+                            <!-- Option C: Arnprior (Home) -->
+                            <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
+                                <div class="font-bold text-lg mb-2">Arnprior (Home/Local)</div>
+                                <div class="text-xs font-bold text-stone-500 uppercase mb-2">Convenient</div>
+                                <p class="text-sm text-stone-600">Easier logistics for Day 2 prep.</p>
+                                <div class="mt-4 p-2 bg-red-50 text-red-700 text-xs rounded"><strong>Cost:</strong> Extra $120-130 travel fee for officiant.</div>
+                            </div>
+                            <!-- Option D: Dominion Arboretum -->
+                            <div class="border border-stone-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer bg-white" onclick="window.highlightLocation(this)">
+                                <div class="font-bold text-lg mb-2">Dominion Arboretum</div>
+                                <div class="text-xs font-bold text-stone-500 uppercase mb-2">Nature Vibes</div>
+                                <p class="text-sm text-stone-600">Willow trees and water. Very popular.</p>
+                                <div class="mt-4 p-2 bg-stone-100 text-stone-700 text-xs rounded"><strong>Note:</strong> Furniture restrictions apply.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Attire -->
+                        <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                            <h3 class="text-lg font-bold text-stone-800 mb-3">Attire: Garden Party Semi-Formal</h3>
+                            <ul class="space-y-3 text-sm text-stone-700">
+                                <li class="flex items-start"><span class="mr-2 text-xl">🤵</span> <span><strong>Udit:</strong> Tan Suit (Confirmed), Brown shoes, White shirt.</span></li>
+                                <li class="flex items-start"><span class="mr-2 text-xl">👰</span> <span><strong>Maddie:</strong> White dress (Slip, Midi, or Modern Suit).</span></li>
+                                <li class="flex items-start"><span class="mr-2 text-xl">🐕</span> <span><strong>Finn:</strong> Needs to look dapper (Bowtie?).</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Photographer Chart -->
+                        <div class="bg-white p-4 rounded-lg border border-stone-200">
+                            <h3 class="text-lg font-bold text-stone-800 mb-2">Photographer Analysis</h3>
+                            <p class="text-xs text-stone-500 mb-4">Friends (Free) vs. Professionals (Paid)</p>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="photoChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -371,6 +414,36 @@
                                             <option value="contacted">Contacted</option>
                                             <option value="quote">Quote Rec'd</option>
                                             <option value="selected" selected>Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
+                                    <td class="font-medium text-stone-900">Agathe Bernard</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$3,800 - $5,200</span></td>
+                                    <td class="px-6 py-4">Adventurous/Outdoor focus. Great for cliffside shots.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
+                                    <td class="font-medium text-stone-900">Grey Loft Studio</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$3,000 - $4,500</span></td>
+                                    <td class="px-6 py-4">Light, airy, romantic. Good value.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
+                                            <option value="researching" selected>Researching</option>
+                                            <option value="contacted">Contacted</option>
+                                            <option value="quote">Quote Rec'd</option>
+                                            <option value="selected">Selected</option>
                                             <option value="booked">Booked</option>
                                         </select>
                                     </td>
