@@ -218,6 +218,16 @@
                     <h2 class="text-2xl font-bold text-amber-800 mb-2">Day 2: The Culture Marathon</h2>
                     <p class="text-stone-600 mb-6">Arnprior (Oct 12). Haldi (AM) + Mehendi (PM) + Sangeet (Eve).</p>
                     
+                    <!-- NEW: Day 2 Logistics & Updates -->
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r mb-8">
+                         <h3 class="font-bold text-amber-800">🏡 Arnprior Logistics (Updated)</h3>
+                         <ul class="text-sm text-amber-700 mt-2 space-y-1">
+                             <li><strong>Porta-Potty:</strong> <span class="font-bold text-red-600">REMOVED</span> from plan. (Taxidermy note remains for guests).</li>
+                             <li><strong>Food:</strong> Indian & Canadian Buffet Options.</li>
+                             <li><strong>Mandap:</strong> Maddie's Dad is building it!</li>
+                         </ul>
+                    </div>
+                    
                     <!-- NEW: Itinerary Timeline -->
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Proposed Timeline</h3>
@@ -315,11 +325,24 @@
                 <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
                     <h2 class="text-2xl font-bold text-rose-800 mb-2">Day 3: The Big Day</h2>
                     <p class="text-stone-600 mb-6">October 13th, 2026. Le Belvédère, Wakefield QC.</p>
+                    
+                    <!-- Le Belvédère Contract Info -->
+                    <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r mb-8">
+                        <h3 class="font-bold text-rose-800">🏨 Venue Contract (Le Belvédère)</h3>
+                         <div class="text-sm text-rose-700 mt-2 space-y-1">
+                             <p><strong>Initial Payment:</strong> $5,000 (Paid)</p>
+                             <p><strong>Next Payment:</strong> $5,000 due 8 months prior (Feb 2026).</p>
+                             <p><strong>Final Balance:</strong> Due 14 days before event.</p>
+                             <p><strong>Service Fee:</strong> 15% + Tax applies to all F&B.</p>
+                         </div>
+                    </div>
+
                     <div class="bg-stone-100 border border-stone-300 p-6 rounded-lg mb-8">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-bold text-stone-800">🐕 Finn's Care Protocol</h3>
                             <span class="bg-stone-800 text-white text-xs px-2 py-1 rounded">Role: Ring Bearer</span>
                         </div>
+                        <div class="text-xs text-stone-500 mb-2"><strong>Contract:</strong> I Do Doggy ($100 Dep. Paid, Bal. $300 due Sep 13, 2026)</div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="font-bold text-stone-700 text-sm mb-2 uppercase">Checklist</h4>
@@ -327,7 +350,7 @@
                                     <li><strong>Handler:</strong> Laura Jackson</li>
                                     <li><strong>Emergency:</strong> Best Man / Maid of Honor</li>
                                     <li><strong>Outfit:</strong> Tuxedo, Bandana, Wreath.</li>
-                                    <li><strong>Golden Rule:</strong> No jumping on Maddie's dress!</li>
+                                    <li><strong>Golden Rule:</strong> <span class="font-bold text-red-600">No jumping on Maddie's dress!</span></li>
                                 </ul>
                             </div>
                             <div>
@@ -417,36 +440,6 @@
                                             <option value="contacted">Contacted</option>
                                             <option value="quote">Quote Rec'd</option>
                                             <option value="selected" selected>Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
-                                    <td class="font-medium text-stone-900">Agathe Bernard</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$3,800 - $5,200</span></td>
-                                    <td class="px-6 py-4">Adventurous/Outdoor focus. Great for cliffside shots.</td>
-                                    <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
-                                    <td class="font-medium text-stone-900">Grey Loft Studio</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$3,000 - $4,500</span></td>
-                                    <td class="px-6 py-4">Light, airy, romantic. Good value.</td>
-                                    <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
                                             <option value="booked">Booked</option>
                                         </select>
                                     </td>
@@ -842,7 +835,7 @@
                                 if (line.includes("Total Budget")) {
                                     const raw = line.split(',')[2] || ""; 
                                     total = parseInt(raw.replace(/[^0-9]/g, '')) || 0;
-                                } 
+                                }
                                 if (line.includes("TOTAL SPENT")) {
                                     const matches = line.match(/\$[0-9,]+/);
                                     if(matches) spent = parseInt(matches[0].replace(/[^0-9]/g, '')) || 0;
@@ -1074,4 +1067,4 @@
         }
     </script>
 </body>
-</html>  
+</html>
