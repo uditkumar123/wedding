@@ -842,7 +842,7 @@
                                 if (line.includes("Total Budget")) {
                                     const raw = line.split(',')[2] || ""; 
                                     total = parseInt(raw.replace(/[^0-9]/g, '')) || 0;
-                                }
+                                } 
                                 if (line.includes("TOTAL SPENT")) {
                                     const matches = line.match(/\$[0-9,]+/);
                                     if(matches) spent = parseInt(matches[0].replace(/[^0-9]/g, '')) || 0;
@@ -1074,4 +1074,4 @@
         }
     </script>
 </body>
-</html>
+</html>  
