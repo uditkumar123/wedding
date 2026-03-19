@@ -83,6 +83,9 @@
                 <button onclick="window.switchTab('tasks')" id="tab-tasks" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
                     Master Tasks
                 </button>
+                <button onclick="window.switchTab('meetings')" id="tab-meetings" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+                    📋 Meeting Notes
+                </button>
             </nav>
         </div>
     </header>
@@ -732,6 +735,326 @@
             </div>
 
             <!-- TASKS VIEW -->
+            <!-- MEETING NOTES VIEW -->
+            <div id="view-meetings" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-stone-100">
+                    <div class="flex justify-between items-center mb-1">
+                        <h2 class="text-2xl font-bold text-stone-800">Meeting Notes</h2>
+                        <span class="text-xs text-stone-400 italic">Every fortnight — Thursday evenings (India time)</span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-6">Udit &amp; Maddie fortnightly planning catch-ups</p>
+
+                    <!-- Meeting: 18 March 2026 -->
+                    <div class="border border-amber-200 rounded-xl overflow-hidden mb-6">
+                        <div class="bg-amber-50 px-6 py-4 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-amber-800">Thursday, 20 March 2026</h3>
+                                <p class="text-xs text-amber-600 mt-0.5">Tonight's Meeting — Agenda &amp; Status</p>
+                            </div>
+                            <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Tonight</span>
+                        </div>
+                        <div class="divide-y divide-stone-100">
+
+                            <!-- Item 1 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Finalisation of travel dates</p>
+                                    <p class="text-sm text-stone-500 mt-0.5">Udit to send link for purchase of tickets.</p>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Udit Working On It
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-rose-100 text-rose-700 text-xs font-bold flex items-center justify-center">2</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Lehenga, Sherwani — Finalisation of measurement &amp; design</p>
+
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-3 mb-1">🌸 Bridal Lehenga (Day 3)</p>
+                                    <p class="text-sm text-stone-500">Maddie's selection:</p>
+                                    <a href="https://www.snusha.com/collections/bridal-lehenga/products/ruby-royale-opulence-lehenga" target="_blank" class="inline-block mt-1 text-sm text-amber-700 underline font-medium break-all hover:text-amber-900">Ruby Royale Opulence Lehenga – Snusha ↗</a>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Pending: Blouse colour confirmation (red or gold) — messaged on business WhatsApp
+                                    </div>
+
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-4 mb-1">💃 Sangeet Outfit (Day 2)</p>
+                                    <p class="text-sm text-stone-500">Maddie's selection:</p>
+                                    <a href="https://www.faizasaqlain.pk/products/pinar" target="_blank" class="inline-block mt-1 text-sm text-amber-700 underline font-medium break-all hover:text-amber-900">Pinar – Faiza Saqlain ↗</a>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Selected ✓
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">3</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Bridesmaid dresses finalisation</p>
+                                    <p class="text-sm text-stone-500 mt-0.5">To be purchased from Myntra / India.</p>
+
+                                    <!-- Day 2 options -->
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-4 mb-2">👗 Day 2 (12th) — Options</p>
+                                    <div class="space-y-2">
+                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
+                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Kailey's Pick</p>
+                                            <a href="https://www.myntra.com/lehenga-choli/suppar+sleave/suppar-sleave-embellished-mirror-work-semi-stitched-lehenga--blouse-with-dupatta/38959259/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Suppar Sleave Mirror Work Lehenga – Myntra ↗</a>
+                                        </div>
+                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
+                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maybe for Ashley?</p>
+                                            <a href="https://www.myntra.com/lehenga-choli/panchhi/panchhi-embellished-sequinned-semi-stitched-lehenga--unstitched-blouse-with-dupatta/38433905/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Panchhi Sequinned Lehenga – Myntra ↗</a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Kailey will browse Myntra &amp; share options for bridesmaids to shortlist
+                                    </div>
+
+                                    <!-- Day 3 options -->
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">👗 Day 3 (13th) — Options</p>
+                                    <div class="space-y-2">
+                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
+                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maybe all bridesmaids?</p>
+                                            <a href="https://www.myntra.com/lehenga-choli/ethnic+plus/ethnic-plus-embellished-sequinned-semi-stitched-lehenga--blouse-with-dupatta/39002479/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Ethnic Plus Sequinned Lehenga – Myntra ↗</a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Under Consideration
+                                    </div>
+
+                                    <!-- Measurements -->
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">📐 Measurements (Bust / Waist / Hips — inches)</p>
+                                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
+                                        <p class="text-xs text-amber-700 font-semibold">⚠️ Remeasure all bridesmaids — current measurements may not be accurate. Note: blouse measurements differ from lehenga measurements.</p>
+                                    </div>
+                                    <div class="overflow-x-auto rounded-lg border border-stone-200">
+                                        <table class="w-full text-sm text-left">
+                                            <thead>
+                                                <tr class="bg-stone-100 text-stone-600 text-xs uppercase">
+                                                    <th class="px-4 py-2 font-semibold">Name</th>
+                                                    <th class="px-4 py-2 font-semibold text-center">Bust</th>
+                                                    <th class="px-4 py-2 font-semibold text-center">Waist</th>
+                                                    <th class="px-4 py-2 font-semibold text-center">Hips</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-stone-100">
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kailey</td><td class="px-4 py-2 text-center text-stone-600">42</td><td class="px-4 py-2 text-center text-stone-600">36</td><td class="px-4 py-2 text-center text-stone-600">48</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Natalie</td><td class="px-4 py-2 text-center text-stone-600">38</td><td class="px-4 py-2 text-center text-stone-600">34</td><td class="px-4 py-2 text-center text-stone-600">39</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kendra</td><td class="px-4 py-2 text-center text-stone-600">41</td><td class="px-4 py-2 text-center text-stone-600">36</td><td class="px-4 py-2 text-center text-stone-600">40</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Ashley</td><td class="px-4 py-2 text-center text-stone-600">47</td><td class="px-4 py-2 text-center text-stone-600">46</td><td class="px-4 py-2 text-center text-stone-600">51</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Christine</td><td class="px-4 py-2 text-center text-stone-600">42</td><td class="px-4 py-2 text-center text-stone-600">40</td><td class="px-4 py-2 text-center text-stone-600">43</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Colour Preferences -->
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">🎨 Colour Preferences — Day 2 (12th)</p>
+                                    <div class="overflow-x-auto rounded-lg border border-stone-200">
+                                        <table class="w-full text-sm text-left">
+                                            <thead>
+                                                <tr class="bg-stone-100 text-stone-600 text-xs uppercase">
+                                                    <th class="px-4 py-2 font-semibold">Name</th>
+                                                    <th class="px-4 py-2 font-semibold">Preferred Colours</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-stone-100">
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kailey</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Teal, Green, Burgundy</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Natalie</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Burgundy</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kendra</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Teal, Green</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Ashley</td><td class="px-4 py-2 text-stone-600">Orange, Blue, Teal</td></tr>
+                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Christine</td><td class="px-4 py-2 text-stone-600">Blue, Green, Burgundy</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <p class="text-xs text-stone-400 italic mt-2">💡 Common colour across all 5: <span class="font-semibold text-blue-600">Blue</span></p>
+
+                                    <!-- Jewellery -->
+                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">💎 Bridesmaid Jewellery Gift (from Maddie)</p>
+                                    <div class="space-y-2">
+                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
+                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Necklace Set ✓ Good option</p>
+                                            <a href="https://www.myntra.com/jewellery-set/rubans/rubans-22k-gold-plated-brass-emerald-ruby-pink-kundan--cz-stone-traditional-necklace-set/24947008/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Rubans 22K Gold Plated Kundan &amp; CZ Necklace Set – Myntra ↗</a>
+                                            <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Shortlisted
+                                            </div>
+                                        </div>
+                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
+                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maang Tikka — check with Udit's mom first</p>
+                                            <a href="https://www.myntra.com/head-jewellery/rubans/rubans-22kt-gold-plated-cubic-zirconia--american-diamond-maang-tikka-head-jewellery/30453677/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Rubans 22K Gold Plated CZ &amp; American Diamond Maang Tikka – Myntra ↗</a>
+                                            <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Pending: Confirm with Udit's mom if bridesmaids should wear tikka
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 4 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">4</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Finalisation of articles to be brought from India</p>
+                                    <p class="text-sm text-stone-500 mt-0.5">Compile the full list of items to carry from India.</p>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-stone-100 text-stone-500 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> To Discuss
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 5 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center">5</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Finalisation of all ceremonies &amp; traditions (Canada)</p>
+                                    <p class="text-sm text-stone-500 mt-0.5">Full breakdown by day — shared by Udit.</p>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Shared ✓
+                                    </div>
+
+                                    <!-- LEGAL SIGNING (TBD) -->
+                                    <div class="mt-5 border border-amber-200 rounded-lg overflow-hidden">
+                                        <div class="bg-amber-50 px-4 py-2 flex items-center justify-between">
+                                            <p class="text-xs font-bold text-amber-800 uppercase tracking-wide">Legal Signing — Ontario Wedding (Date TBD)</p>
+                                            <span class="bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">DECISION PENDING</span>
+                                        </div>
+                                        <div class="px-4 py-3 text-sm text-stone-600 space-y-2">
+                                            <p>The legal signing will be done under <span class="font-semibold">Ontario</span> (not Quebec), so it will <span class="font-semibold">not</span> take place at Le Belvédère.</p>
+                                            <p class="font-semibold text-stone-700 mt-2">Two options under consideration:</p>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                                                <div class="bg-white border border-stone-200 rounded-lg p-3">
+                                                    <p class="text-xs font-bold text-blue-700 uppercase mb-1">Option A — On the 12th</p>
+                                                    <p class="text-xs text-stone-500">Full setup at the Haldi/Mehendi venue with all guests present. Logistics are more complex (officiant, paperwork, setup).</p>
+                                                </div>
+                                                <div class="bg-white border border-stone-200 rounded-lg p-3">
+                                                    <p class="text-xs font-bold text-rose-700 uppercase mb-1">Option B — Before the 12th (Elopement)</p>
+                                                    <p class="text-xs text-stone-500">Intimate elopement at a park or scenic location with just immediate family &amp; close friends. Simpler logistics.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- DAY 2: 12TH -->
+                                    <div class="mt-4 border border-stone-200 rounded-lg overflow-hidden">
+                                        <div class="bg-stone-800 px-4 py-2">
+                                            <p class="text-xs font-bold text-white uppercase tracking-wide">Day 2 — Friday, June 12 · Haldi &amp; Mehendi</p>
+                                        </div>
+                                        <div class="px-4 py-3">
+                                            <div class="relative border-l-2 border-amber-300 ml-2 space-y-4">
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-amber-700 uppercase">Morning</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Haldi Ceremony</p>
+                                                    <p class="text-xs text-stone-500">Turmeric ceremony with family. Location TBD.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-stone-300 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-stone-500 uppercase">Midday</p>
+                                                    <p class="text-sm text-stone-700">Break / Downtime</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-amber-700 uppercase">Afternoon / Evening</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Mehendi + Music &amp; Gathering</p>
+                                                    <p class="text-xs text-stone-500">Mehendi application, music, food, casual celebration vibe. Everyone together.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- DAY 3: 13TH -->
+                                    <div class="mt-4 border border-stone-200 rounded-lg overflow-hidden">
+                                        <div class="bg-stone-800 px-4 py-2">
+                                            <p class="text-xs font-bold text-white uppercase tracking-wide">Day 3 — Saturday, June 13 · Le Belvédère — Hindu Ceremony &amp; Reception</p>
+                                        </div>
+                                        <div class="px-4 py-3">
+                                            <div class="relative border-l-2 border-rose-300 ml-2 space-y-4">
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-rose-700 uppercase">9:00 AM — Getting Ready</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Arrive at Le Belvédère — Separate houses</p>
+                                                    <p class="text-xs text-stone-500">Bride's party → Garden House (hair &amp; makeup stations, kitchenette, 200ft from main). Groom's party → Guest House (check-in 1pm, sleeps 6-10, 500ft from main).</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-rose-700 uppercase">First Looks &amp; Photos</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Bride &amp; Groom first look + pre-ceremony portraits</p>
+                                                    <p class="text-xs text-stone-500">Union Eleven (photographer &amp; videographer — booked). Stunning Gatineau Hills backdrop.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-rose-700 uppercase">Hindu Ceremony</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Ceremony on the cliffside terrace (or cozy indoor room)</p>
+                                                    <p class="text-xs text-stone-500">Venue includes state-of-the-art sound system, podium, wireless mic. Mandap TBD (Arie?).</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-amber-700 uppercase">Cocktail Hour</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Outdoor deck — guests mingle, canapés &amp; drinks</p>
+                                                    <p class="text-xs text-stone-500">5 canapés/person included. Bar opens after ceremony (wine package included). Outdoor lounge seating, background music. Great opportunity for family photos while guests enjoy cocktails.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-amber-700 uppercase">Golden Hour</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Sunset shots — bride &amp; groom</p>
+                                                    <p class="text-xs text-stone-500">The Belvédère hilltop is perfect for sunset photos over the Gatineau valley.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-rose-700 uppercase">Dinner</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Gourmet 3-course meal — wine service throughout</p>
+                                                    <p class="text-xs text-stone-500">Menu to be selected 60 days prior (online form). Includes: 4 mains (2 protein, 1 veggie, 1 vegan), soup or salad, dessert. Coffee &amp; tea service. White chiavari chairs, floor-length linen, coloured napkins.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-rose-700 uppercase">10:00 – 11:30 PM</p>
+                                                    <p class="text-sm text-stone-700 font-semibold">Late-night station + Dance Party</p>
+                                                    <p class="text-xs text-stone-500">1 late-night food station included. Multi-coloured LED lighting on dancefloor. DJ/band needed (TBD). Outdoor campfire lit after dinner (weather permitting). Shots available after 9pm.</p>
+                                                </div>
+                                                <div class="pl-5 relative">
+                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-stone-400 border-2 border-white"></span>
+                                                    <p class="text-xs font-bold text-stone-500 uppercase">Overnight</p>
+                                                    <p class="text-sm text-stone-700">Guest House — 6-10 guests, checkout 10am next day</p>
+                                                    <p class="text-xs text-stone-500">3 units, full washrooms, kitchenette. No noise after 1am.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Venue key facts -->
+                                    <div class="mt-4 bg-stone-50 border border-stone-200 rounded-lg p-4">
+                                        <p class="text-xs font-bold text-stone-600 uppercase mb-2">Le Belvédère — Key Facts from Package</p>
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                                            <div><p class="text-lg font-bold text-stone-800">$189</p><p class="text-[10px] text-stone-500 uppercase">/guest (June, 100 min)</p></div>
+                                            <div><p class="text-lg font-bold text-stone-800">109</p><p class="text-[10px] text-stone-500 uppercase">Expected Guests</p></div>
+                                            <div><p class="text-lg font-bold text-stone-800">9am</p><p class="text-[10px] text-stone-500 uppercase">Garden House Access</p></div>
+                                            <div><p class="text-lg font-bold text-stone-800">$75/hr</p><p class="text-[10px] text-stone-500 uppercase">Early Check-in Fee</p></div>
+                                        </div>
+                                        <p class="text-[10px] text-stone-400 mt-2 text-center">*Prices subject to tax &amp; 15% service. Menu form sent 60 days before. Final planning walk-through the week before.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 6 -->
+                            <div class="px-6 py-4 flex items-start gap-4">
+                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">6</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">General progress update</p>
+                                    <p class="text-sm text-stone-500 mt-0.5">Each person to share updates on what's been done since last meeting.</p>
+                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-stone-100 text-stone-500 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> To Discuss
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- Future meetings will appear here -->
+                    <p class="text-center text-xs text-stone-400 italic">Past meetings will be archived below as they're completed.</p>
+                </div>
+            </div>
+
             <div id="view-tasks" class="hidden h-full">
                 <!-- (Content Identical to Previous Version) -->
                 <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100 h-full flex flex-col">
@@ -888,7 +1211,8 @@
             day2: document.getElementById('view-day2'),
             day3: document.getElementById('view-day3'),
             vendors: document.getElementById('view-vendors'),
-            tasks: document.getElementById('view-tasks')
+            tasks: document.getElementById('view-tasks'),
+            meetings: document.getElementById('view-meetings')
         };
         const tabs = {
             dashboard: document.getElementById('tab-dashboard'),
@@ -896,7 +1220,8 @@
             day2: document.getElementById('tab-day2'),
             day3: document.getElementById('tab-day3'),
             vendors: document.getElementById('tab-vendors'),
-            tasks: document.getElementById('tab-tasks')
+            tasks: document.getElementById('tab-tasks'),
+            meetings: document.getElementById('tab-meetings')
         };
         const countdownEl = document.getElementById('countdown');
         const guestSlider = document.getElementById('guest-slider');
