@@ -1,0 +1,8 @@
+section,task,owner,due_date,status,priority,website_display,source,notes
+Data Integration,Reconcile guest count: GitHub 109 vs Google Sheet 115,Udit/Maddie,2026-06-01,Not Started,Urgent,yes,GitHub + Google Sheet,"This affects rentals, food, shuttle and ceremony seating."
+Guest Experience,"Create Indian relatives hosting plan with meals, pickups and comfort notes",Udit + Parents,2026-06-15,In Progress,Urgent,internal,Command Centre,This is the parent-facing hospitality tracker.
+Day 2,Lock Oct 12 venue/address and rain plan,Udit/Maddie,2026-07-01,Not Started,Urgent,yes,GitHub Day 2 + Command Centre,Needed before public website update.
+Day 2,"Confirm Haldi, Mehendi and Sangeet food vendor/menu",Udit/Maddie,2026-07-15,Not Started,High,yes,Food & Drinks / vendor list,"Include vegetarian, mild spice, chai, kids, elders."
+Day 3,Confirm ceremony start time with Le Belvédère,Udit/Maddie,2026-08-01,Not Started,Urgent,yes,Venue contract/package,Venue says ceremonies can begin between 4 and 6; website timeline has earlier getting ready/photos.
+Transport,Finalize Ottawa/Wakefield shuttle quote and pickup plan,Udit,2026-08-15,Not Started,Urgent,yes,Transport Plan,Use RSVP question for shuttle seats.
+Website,Update GitHub site to load generated CSV/JSON safely,Udit/Codex,2026-06-01,Not Started,High,internal,GitHub repo,Use generated integration package.

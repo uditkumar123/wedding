@@ -14,6 +14,13 @@
         .tab-inactive { color: #78716c; }
         .tab-inactive:hover { color: #d97706; }
         .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; height: 300px; }
+        .admin-warning { background: #fffbeb; border: 1px solid #f59e0b; color: #92400e; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; }
+        .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #e7e5e4; transform: translateX(-50%); }
+        .timeline-dot { position: absolute; left: 50%; top: 0.35rem; width: 12px; height: 12px; border-radius: 999px; background: #d97706; border: 3px solid #fff; box-shadow: 0 0 0 2px #fbbf24; transform: translateX(-50%); z-index: 1; }
+        @media (max-width: 640px) {
+            .timeline-line, .timeline-dot { left: 0.4rem; }
+            .timeline-content { width: calc(100% - 2rem) !important; margin-left: 2rem !important; margin-right: 0 !important; text-align: left !important; }
+        }
         /* Table Styles for Vendor Research */
         .vendor-table th { background-color: #f5f5f4; text-align: left; padding: 12px; font-weight: 600; color: #44403c; border-bottom: 2px solid #e7e5e4; }
         .vendor-table td { padding: 12px; border-bottom: 1px solid #e7e5e4; vertical-align: middle; }
@@ -98,21 +105,9 @@
             <div id="view-dashboard" class="space-y-8 animate-fade-in">
                 <div class="bg-white rounded-xl shadow-sm p-8 border border-stone-100">
                     <h2 class="text-2xl font-bold text-stone-800 mb-4">Planning Overview</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                        <!-- Budget Chart -->
-                        <div class="bg-stone-50 rounded-lg p-6 border border-stone-200">
-                            <h3 class="text-lg font-semibold text-stone-700 mb-4 text-center">Budget Breakdown</h3>
-                            <div class="flex justify-between text-sm mb-2 px-4">
-                                <span class="text-stone-500">Total: <b class="text-stone-800" id="disp-budget-total">$36,567</b></span>
-                                <span class="text-emerald-600">Spent: <b id="disp-budget-spent">$7,000</b></span>
-                            </div>
-                            <div class="chart-container" style="height: 250px;">
-                                <canvas id="budgetChart"></canvas>
-                            </div>
-                            <p class="text-xs text-center text-stone-500 mt-2">Sync: Upload 'Budget.csv' below to update.</p>
-                        </div>
+                    <div class="grid grid-cols-1 gap-8 items-start">
                         <!-- Summary Cards -->
-                        <div class="grid grid-cols-1 gap-4">
+                        <div id="planning-overview-cards" class="grid grid-cols-1 gap-4">
                             <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-lg">
                                 <h4 class="font-bold text-emerald-800">Day 1: The Signing</h4>
                                 <p class="text-sm text-emerald-700 mt-1">Status: Planning. Location decision needed. Suit selected.</p>
@@ -133,6 +128,8 @@
                             </div>
                         </div>
                     </div>
+                    <div id="planner-warnings" class="mt-6 space-y-2"></div>
+                    <div id="guest-summary" class="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3"></div>
                 </div>
             </div>
 
@@ -147,7 +144,7 @@
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r mb-8">
                         <h3 class="font-bold text-blue-800">📜 Legal & Admin</h3>
                         <div class="text-sm text-blue-700 mt-2 space-y-1">
-                            <p><strong>Officiant:</strong> Catherine Walter / Merry Fairy (Confirmed?)</p>
+                            <p><strong>Officiant:</strong> Merry Fairy / legal officiant shortlist (Confirm)</p>
                             <p><strong>Package:</strong> $450 + HST (Elopement Pkg)</p>
                             <p><strong>Retainer:</strong> $100 due to book.</p>
                             <p><strong>Travel Fee:</strong> +$120-130 if in Arnprior (vs Ottawa).</p>
@@ -234,7 +231,7 @@
                     <!-- NEW: Itinerary Timeline -->
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Proposed Timeline</h3>
-                        <div class="relative py-4">
+                        <div id="day2-timeline" class="relative py-4">
                             <div class="timeline-line"></div>
                             
                             <!-- Haldi -->
@@ -350,7 +347,7 @@
                             <div>
                                 <h4 class="font-bold text-stone-700 text-sm mb-2 uppercase">Checklist</h4>
                                 <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
-                                    <li><strong>Handler:</strong> Laura Jackson</li>
+                                    <li><strong>Handler:</strong> Confirm assigned dog handler</li>
                                     <li><strong>Emergency:</strong> Best Man / Maid of Honor</li>
                                     <li><strong>Outfit:</strong> Tuxedo, Bandana, Wreath.</li>
                                     <li><strong>Golden Rule:</strong> <span class="font-bold text-red-600">No jumping on Maddie's dress!</span></li>
@@ -366,6 +363,11 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-stone-800 mb-4 border-b pb-2">Ceremony & Reception Timeline</h3>
+                        <div id="day3-timeline" class="relative py-4"></div>
+                    </div>
                     
                     <!-- CRITICAL DEADLINE SECTION -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -373,7 +375,7 @@
                             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r">
                                 <h3 class="font-bold text-red-800">🚨 Critical Deadline</h3>
                                 <p class="text-sm text-red-700 mt-1">
-                                    Christine visits Ottawa on <strong>January 7th, 2026</strong>. Maddie MUST make the <strong>Paper Flower Invite</strong> before then.
+                                    A family visit is planned for <strong>January 7th, 2026</strong>. Maddie MUST make the <strong>Paper Flower Invite</strong> before then.
                                 </p>
                             </div>
                         </div>
@@ -398,334 +400,698 @@
                                     <th scope="col" class="px-6 py-3">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Venue (Booked) -->
+                            <tbody id="vendor-table-body">
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Venue</span></td>
-                                    <td class="font-medium text-stone-900">Le Belvédère</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$20,000+</span></td>
-                                    <td class="px-6 py-4">Wakefield, QC. Includes food/drink minimums usually.</td>
+                                    <td class="font-medium text-stone-900">Le Belvédère<br><a class="text-xs text-amber-700 underline" href="https://lebelvedere.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">$159/guest contract; 75 adult minimum; tax/service extra</span></td>
+                                    <td class="px-6 py-4">Venue for Oct 13. Contract terms loaded into Venue Rules sheet.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
-                                            <option value="researching">Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked" selected>Booked</option>
-                                        </select>
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" selected>Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Dog Care (Booked) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Pet Care</span></td>
                                     <td class="font-medium text-stone-900">I Do Doggy</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$400 - $600</span></td>
-                                    <td class="px-6 py-4">For Finn. Includes transport & handling during ceremony.</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$100 deposit paid; balance $300 due Sep 13, 2026</span></td>
+                                    <td class="px-6 py-4">Finn ring bearer support.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
-                                            <option value="researching">Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked" selected>Booked</option>
-                                        </select>
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" selected>Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Priest (Booked) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Priest</span></td>
-                                    <td class="font-medium text-stone-900">Ottawa Hindu Temple <br><span class="text-xs text-stone-500">Dhavalkumar Purohit · 613-899-0669</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">$1,502</span></td>
-                                    <td class="px-6 py-4">Hindu ceremony priest. Payment due Oct 12.</td>
+                                    <td class="font-medium text-stone-900">Ottawa Hindu Temple / Dhavalkumar Purohit</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$1,502 noted on website</span></td>
+                                    <td class="px-6 py-4">Payment due Oct 12 per website note.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
-                                            <option value="researching">Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked" selected>Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Officiant (Booked) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Officiant</span></td>
-                                    <td class="font-medium text-stone-900">Grounded Ceremonies <br><span class="text-xs text-stone-500">groundedceremonies.com</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">$475</span></td>
-                                    <td class="px-6 py-4">Essential package. Jan 23 payment made ($200). Balance due Jan 23.</td>
+                                    <td class="font-medium text-stone-900">Grounded Ceremonies<br><a class="text-xs text-amber-700 underline" href="https://groundedceremonies.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">$475 essential; $200 paid noted</span></td>
+                                    <td class="px-6 py-4">Legal ceremony decision still pending.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
-                                            <option value="researching">Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked" selected>Booked</option>
-                                        </select>
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" selected>Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Photography (Booked) -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
-                                    <td class="font-medium text-stone-900">Union Eleven <br><span class="text-xs text-stone-500">613-317-7566 · studio@unioneleven.com</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">$7,797</span></td>
-                                    <td class="px-6 py-4">Photography & videography studio. Indian & fusion weddings. Deposit $2,000 paid. Sep 12: $5,000 due.</td>
+                                    <td class="px-6 py-4"><span class="tag-category">Photo/Video</span></td>
+                                    <td class="font-medium text-stone-900">Union Eleven<br><a class="text-xs text-amber-700 underline" href="https://unioneleven.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">$7,797; $2,000 paid; $5,000 due Sep 12</span></td>
+                                    <td class="px-6 py-4">Booked per website.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)">
-                                            <option value="researching">Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked" selected>Booked</option>
-                                        </select>
+                                        <select class="status-select status-booked" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" selected>Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Photo alternatives -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Photo</span></td>
-                                    <td class="font-medium text-stone-900">Amar Studios <br><span class="text-xs text-stone-500">613-355-6875 · info@amarstudios.ca</span></td>
+                                    <td class="px-6 py-4"><span class="tag-category">Photo/Video</span></td>
+                                    <td class="font-medium text-stone-900">Amar Studios<br><a class="text-xs text-amber-700 underline" href="https://amarstudios.ca" target="_blank" rel="noopener">Website</a></td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Photo & video team experienced with South Asian weddings in Ottawa.</td>
+                                    <td class="px-6 py-4">South Asian photo/video option.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-quote" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" selected>Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Video</span></td>
                                     <td class="font-medium text-stone-900">North Park Films</td>
                                     <td class="px-6 py-4"><span class="tag-price">~$3,500</span></td>
-                                    <td class="px-6 py-4">Videography studio. High rating (5/5).</td>
+                                    <td class="px-6 py-4">Videography option.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <!-- Makeup -->
-                                <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Makeup</span></td>
-                                    <td class="font-medium text-stone-900">Glam by Ariana <br><span class="text-xs text-stone-500">613-265-7175 Ariana Assadi</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Multicultural bridal makeup artist. Glam services.</td>
-                                    <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-quote" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" selected>Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
-                                    <td class="font-medium text-stone-900">Radiant by Raadhaa <br><span class="text-xs text-stone-500">613-869-7232 Raadhaa Singh</span></td>
+                                    <td class="font-medium text-stone-900">Glam by Ariana</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Ethnic bridal hair & makeup. Based in Nepean.</td>
+                                    <td class="px-6 py-4">Multicultural bridal makeup.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
-                                    <td class="font-medium text-stone-900">Red Carpet Glamour <br><span class="text-xs text-stone-500">613-986-1448 Neelam Kaur</span></td>
+                                    <td class="font-medium text-stone-900">Radiant by Raadhaa</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">South Asian bridal makeup & hair styling studio.</td>
+                                    <td class="px-6 py-4">Ethnic bridal HMU.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <!-- Catering -->
-                                <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
-                                    <td class="font-medium text-stone-900">Host India <br><span class="text-xs text-stone-500">613-746-4678 · contact@hostindia.ca</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">$25 - $40 / person</span></td>
-                                    <td class="px-6 py-4">Custom Indian menus. Vegetarian, vegan, gluten-free & halal options.</td>
-                                    <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
-                                    <td class="font-medium text-stone-900">East India Company <br><span class="text-xs text-stone-500">613-567-4634 · eastindiaco.com</span></td>
+                                    <td class="px-6 py-4"><span class="tag-category">HMU</span></td>
+                                    <td class="font-medium text-stone-900">Red Carpet Glamour</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Indian restaurant with live wedding catering stations. Widely used in Ottawa.</td>
+                                    <td class="px-6 py-4">South Asian bridal styling.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Catering</span></td>
-                                    <td class="font-medium text-stone-900">All Seasons Indian Catering <br><span class="text-xs text-stone-500">613-738-7786 · allseasons@indiancatering.ca</span></td>
-                                    <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Full-service Indian catering. Vegetarian & non-vegetarian options.</td>
+                                    <td class="px-6 py-4"><span class="tag-category">Day 2 Catering</span></td>
+                                    <td class="font-medium text-stone-900">Host India<br><a class="text-xs text-amber-700 underline" href="https://hostindia.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">$25-$40/person estimate</span></td>
+                                    <td class="px-6 py-4">Good option for Indian buffet.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Henna -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Henna</span></td>
-                                    <td class="font-medium text-stone-900">Sana Khan Henna <br><span class="text-xs text-stone-500">613-413-6029 · skhan.henna@gmail.com</span></td>
+                                    <td class="px-6 py-4"><span class="tag-category">Day 2 Catering</span></td>
+                                    <td class="font-medium text-stone-900">East India Company<br><a class="text-xs text-amber-700 underline" href="https://eastindiaco.com" target="_blank" rel="noopener">Website</a></td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Bridal mehndi specialist.</td>
+                                    <td class="px-6 py-4">Indian restaurant catering.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Day 2 Catering</span></td>
+                                    <td class="font-medium text-stone-900">All Seasons Indian Catering<br><a class="text-xs text-amber-700 underline" href="https://indiancatering.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
+                                    <td class="px-6 py-4">Indian wedding catering.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Henna</span></td>
-                                    <td class="font-medium text-stone-900">Mehndi by Manal <br><span class="text-xs text-stone-500">mehndibymanal@gmail.com</span></td>
+                                    <td class="font-medium text-stone-900">Sana Khan Henna</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Intricate bridal henna designs.</td>
+                                    <td class="px-6 py-4">Bridal mehendi specialist.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- DJ -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
-                                    <td class="font-medium text-stone-900">Sparkk Entertainment (DJ Arjun) <br><span class="text-xs text-stone-500">613-282-6696 · sparkkentertainment.ca</span></td>
+                                    <td class="px-6 py-4"><span class="tag-category">Henna</span></td>
+                                    <td class="font-medium text-stone-900">Mehndi by Manal</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Bollywood & Bhangra wedding DJ. DJ Arjun also performs dhol.</td>
+                                    <td class="px-6 py-4">Henna option.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Décor -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
-                                    <td class="px-6 py-4"><span class="tag-category">Décor</span></td>
-                                    <td class="font-medium text-stone-900">Hera Events & Decor <br><span class="text-xs text-stone-500">613-897-2519 · hera.events.decor@gmail.com</span></td>
+                                    <td class="px-6 py-4"><span class="tag-category">DJ/Dhol</span></td>
+                                    <td class="font-medium text-stone-900">Sparkk Entertainment / DJ Arjun<br><a class="text-xs text-amber-700 underline" href="https://sparkkentertainment.ca" target="_blank" rel="noopener">Website</a></td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">South Asian wedding décor. Mandap & cultural backdrops.</td>
+                                    <td class="px-6 py-4">Potential DJ/dhol option.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Décor</span></td>
-                                    <td class="font-medium text-stone-900">Pearl Decor Ottawa <br><span class="text-xs text-stone-500">1-844-24-PEARL · info@ottawapearldecor.com</span></td>
+                                    <td class="font-medium text-stone-900">Hera Events &amp; Decor</td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Décor & rentals for mehndi, sangeet & reception. South-Asian-friendly inventory.</td>
+                                    <td class="px-6 py-4">South Asian décor.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Transport -->
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor</span></td>
+                                    <td class="font-medium text-stone-900">Pearl Decor Ottawa<br><a class="text-xs text-amber-700 underline" href="https://ottawapearldecor.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
+                                    <td class="px-6 py-4">South Asian décor/rentals.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Transport</span></td>
-                                    <td class="font-medium text-stone-900">Ottawa → Wakefield Shuttle</td>
-                                    <td class="px-6 py-4"><span class="tag-price">$1,200 - $1,800</span></td>
-                                    <td class="px-6 py-4">School bus or coach shuttle (Ottawa ↔ Wakefield). Need to source quotes.</td>
+                                    <td class="font-medium text-stone-900">Ottawa -&gt; Wakefield Shuttle</td>
+                                    <td class="px-6 py-4"><span class="tag-price">$1,200-$1,800 estimate</span></td>
+                                    <td class="px-6 py-4">Critical guest comfort item.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-quote" onchange="window.updateStatusColor(this)"><option value="researching" >Researching</option><option value="contacted" >Contacted</option><option value="quote" selected>Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Florist -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Florist</span></td>
-                                    <td class="font-medium text-stone-900">WFlowers Ottawa <br><span class="text-xs text-stone-500">613-224-0240 · wflowersottawa.com</span></td>
+                                    <td class="font-medium text-stone-900">WFlowers Ottawa<br><a class="text-xs text-amber-700 underline" href="https://wflowersottawa.com" target="_blank" rel="noopener">Website</a></td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">Ottawa florist experienced with wedding floral. Collaborates with décor teams.</td>
+                                    <td class="px-6 py-4">Ottawa florist.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
-                                <!-- Wedding Planner -->
                                 <tr class="bg-white border-b hover:bg-stone-50">
                                     <td class="px-6 py-4"><span class="tag-category">Planner</span></td>
-                                    <td class="font-medium text-stone-900">Ishq Weddings <br><span class="text-xs text-stone-500">eiman@ishqweddings.ca · ishqweddings.ca</span></td>
+                                    <td class="font-medium text-stone-900">Ishq Weddings<br><a class="text-xs text-amber-700 underline" href="https://ishqweddings.ca" target="_blank" rel="noopener">Website</a></td>
                                     <td class="px-6 py-4"><span class="tag-price">TBD</span></td>
-                                    <td class="px-6 py-4">South Asian & multicultural planner. Full/partial/month-of packages.</td>
+                                    <td class="px-6 py-4">Could reduce family stress.</td>
                                     <td class="px-6 py-4">
-                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)">
-                                            <option value="researching" selected>Researching</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="quote">Quote Rec'd</option>
-                                            <option value="selected">Selected</option>
-                                            <option value="booked">Booked</option>
-                                        </select>
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Beauty</span></td>
+                                    <td class="font-medium text-stone-900">One Fine Beauty<br><a class="text-xs text-amber-700 underline" href="onefinebeauty.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not publicly listed (pricing guide on request)</span></td>
+                                    <td class="px-6 py-4">Brides praise the team’s professionalism and skill – clients felt “in good hands” and appreciated smooth communication and fun trials; makeup lasted all day[3][4].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Beauty</span></td>
+                                    <td class="font-medium text-stone-900">Showpony Hair<br><a class="text-xs text-amber-700 underline" href="showponyhair.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (contact for quote)</span></td>
+                                    <td class="px-6 py-4">Clients call Lori’s team “the absolute best” – reviews highlight the warm, comforting salon atmosphere and attention to detail (even candy bar treats!)[8]. Excellent service and stunning bridal hairstyles[9].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Beauty</span></td>
+                                    <td class="font-medium text-stone-900">Klava Z Beauty<br><a class="text-xs text-amber-700 underline" href="klavazykova.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom packages)</span></td>
+                                    <td class="px-6 py-4">Known for radiant, natural looks – brides say they “never felt more beautiful.” Clients commend the team’s calming, professional approach and long-lasting makeup looks[13][14].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Beauty</span></td>
+                                    <td class="font-medium text-stone-900">Parla Hair<br><a class="text-xs text-amber-700 underline" href="parlahair.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">2026 rates: Bride’s hair $395; trial $275; guest $200[15] (+ travel fees)</span></td>
+                                    <td class="px-6 py-4">Couples love Kira’s soft, effortless styling. Reviews praise her meticulous work and flawless hairstyles that last through the night, as well as her calm, friendly demeanor[17].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Beauty</span></td>
+                                    <td class="font-medium text-stone-900">Rebecca Rose Beauty<br><a class="text-xs text-amber-700 underline" href="rebeccarosebeauty.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">2025: Bridal makeup $350; trial $190; attendant $165[18][19]</span></td>
+                                    <td class="px-6 py-4">Widely lauded for fresh, glowing makeup. Brides say everyone looked “absolutely stunning,” noting Rebecca is receptive to feedback and makes everyone comfortable[24]. Her personalized approach and kindness are also frequently praised[25].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Cake</span></td>
+                                    <td class="font-medium text-stone-900">Valentina’s Sweets<br><a class="text-xs text-amber-700 underline" href="valentinassweets.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Starting at $11.50/serving (buttercream cakes; fondant $13/serving)[26]</span></td>
+                                    <td class="px-6 py-4">Customers call Valentina’s Sweets “by far the best in the business” – desserts are “absolutely drool worthy” and beautifully presented[27]. Known to wow guests with stunning dessert tables.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Cake</span></td>
+                                    <td class="font-medium text-stone-900">ThimbleCakes<br><a class="text-xs text-amber-700 underline" href="thimblecakes.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not listed (custom quotes)</span></td>
+                                    <td class="px-6 py-4">Beloved for inclusive vegan/gluten-free treats. Wedding couples rave about “fluffy, perfectly sweet” cakes (e.g. cookie-dough flavor) and praise the moist, delicious cupcakes[28]. Many “highly recommend” ThimbleCakes for its quality and accommodating dietary options[29].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Cake</span></td>
+                                    <td class="font-medium text-stone-900">Batter Up Bakery<br><a class="text-xs text-amber-700 underline" href="batterupbakery.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom design, request quote)</span></td>
+                                    <td class="px-6 py-4">Renowned for stunning custom cakes and cookies. Clients say the results “exceeded…expectations” – beautifully designed and delicious[32]. Owner Jamie-Lynn is praised for exceptional customer service, creativity, and bringing each client’s vision to life[33][34].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Cake</span></td>
+                                    <td class="font-medium text-stone-900">Dulce Cake Design<br><a class="text-xs text-amber-700 underline" href="dulcecakedesign.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom quotes)</span></td>
+                                    <td class="px-6 py-4">Specializes in artistic, mini and classic cakes. (No public reviews found – known for passion and delightful client interactions per venue’s note[35].)</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Cake</span></td>
+                                    <td class="font-medium text-stone-900">The Cupcake Lounge<br><a class="text-xs text-amber-700 underline" href="thecupcakelounge.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not listed (cupcake &amp; cake shop, menu pricing)</span></td>
+                                    <td class="px-6 py-4">Famous for gourmet cupcakes and occasion cakes in unique flavors. Wedding clients praise their flexibility and quality – “brought our vision to life” and provided a fun tasting experience[37]. Some note minor consistency issues, but overall a highly popular choice for sweet tables.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Dance Floors</span></td>
+                                    <td class="font-medium text-stone-900">Ottawa Dance Floors<br><a class="text-xs text-amber-700 underline" href="ottawadancefloors.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom quotes)</span></td>
+                                    <td class="px-6 py-4">Highly praised for exceptional service and quality. Clients mention a smooth, attentive process and great attention to detail when installing custom vinyl dance floors[39].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor/Rentals</span></td>
+                                    <td class="font-medium text-stone-900">Mastermind Events<br><a class="text-xs text-amber-700 underline" href="mmecanada.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (contact for quote)</span></td>
+                                    <td class="px-6 py-4">Family-run linen and event rental specialist. Known for extensive inventory and top-notch attention to detail (as noted by venue)[40]. Client feedback often highlights their reliability and friendly service.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor/Rentals</span></td>
+                                    <td class="font-medium text-stone-900">The Gathering Co.<br><a class="text-xs text-amber-700 underline" href="thegatheringeventco.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Offers décor and florals – “passion visible [and] enthusiasm contagious” per venue’s recommendation[41]. Couples often praise their creativity and the feeling that the team becomes an extension of your own on the big day.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor/Rentals</span></td>
+                                    <td class="font-medium text-stone-900">Sage Design<br><a class="text-xs text-amber-700 underline" href="sagedesigns.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Highly reputed for effortless execution of elegant décor. Clients appreciate Sage’s one-stop-shop convenience (décor, rentals, florals) and often comment that the team brings visions to life seamlessly.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor/Rentals</span></td>
+                                    <td class="font-medium text-stone-900">Wedecor<br><a class="text-xs text-amber-700 underline" href="wedecor.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom packages)</span></td>
+                                    <td class="px-6 py-4">Known as a premier design firm. Pre-2020 reviews lauded stunning, transformative décor and professionalism[42]. However, some recent couples reported communication issues post-pandemic (delays in responses and minor setup issues)[43][44]. Overall, they deliver beautiful results but consistency has varied in recent feedback.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
+                                    <td class="font-medium text-stone-900">Oxygen Entertainment<br><a class="text-xs text-amber-700 underline" href="oxygenentertainment.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (packages)</span></td>
+                                    <td class="px-6 py-4">Highly recommended – packs dancefloors all night. Clients frequently mention the DJs’ adaptability to crowd preferences and the fun, high-energy atmosphere created[45].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
+                                    <td class="font-medium text-stone-900">Pulse Entertainment<br><a class="text-xs text-amber-700 underline" href="pulse-entertainment.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Popular with crowds – reviews often highlight their team’s charisma and ability to get guests singing and laughing along. A consistent “crowd favorite” for keeping the party going[46].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
+                                    <td class="font-medium text-stone-900">Extreme Entertainment<br><a class="text-xs text-amber-700 underline" href="extremedj.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Packages available</span></td>
+                                    <td class="px-6 py-4">Offers multiple DJ packages – praised for a perfect balance of energy and professionalism. Couples love their experienced DJs and note the packed dance floors and personalized mixes[47].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
+                                    <td class="font-medium text-stone-900">Capital Events &amp; Ent.<br><a class="text-xs text-amber-700 underline" href="ceedj.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Diverse services (games, lighting, rentals). Known for unmatched enthusiasm – reviewers say they “have your guests on their feet having a blast” all night[48].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">DJ</span></td>
+                                    <td class="font-medium text-stone-900">DJ Paul LeBlanc<br><a class="text-xs text-amber-700 underline" href="djpaulleblanc.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">A veteran in Ottawa’s DJ scene. Renowned for keeping dance floors full with a tailored mix; couples appreciate his personal touch and reliable, upbeat service (often mentioned by venue staff).</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Bridalwear</span></td>
+                                    <td class="font-medium text-stone-900">Revelle Bridal<br><a class="text-xs text-amber-700 underline" href="revellebridal.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (dress prices vary)</span></td>
+                                    <td class="px-6 py-4">Modern boutique with curated gowns. Brides love the private, relaxed experience and often mention the knowledgeable stylists who make dress shopping fun and stress-free.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Bridalwear</span></td>
+                                    <td class="font-medium text-stone-900">With Love Bridal<br><a class="text-xs text-amber-700 underline" href="withlovebridalboutique.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Highly rated for excellent service – many reviews highlight the boutique’s wide selection and how the staff “truly care” about helping find “the perfect dress”. Warm, personal service noted[49].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Bridalwear</span></td>
+                                    <td class="font-medium text-stone-900">Sinders Bridal<br><a class="text-xs text-amber-700 underline" href="sindersbridal.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">A longstanding bridal salon. Known for extensive selection (from classic to couture) and attentive consultants. Feedback commonly praises their patience and the memorable “say yes to the dress” moments.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Florist</span></td>
+                                    <td class="font-medium text-stone-900">Pollen Nation<br><a class="text-xs text-amber-700 underline" href="wearepollennation.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom quotes)</span></td>
+                                    <td class="px-6 py-4">Artistic, organic florals. Clients adore Katherine’s unique designs – “stunning bouquets and statement pieces” – often noting her creations as a talking point all night[50]. Friendly and creative service.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Florist</span></td>
+                                    <td class="font-medium text-stone-900">Love in Bloom<br><a class="text-xs text-amber-700 underline" href="loveinbloomott.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Romantic, timeless florals. Couples highlight Carla’s ability to execute their “floral dreams,” whether classic centerpieces or big installations. Many love the personal touches (sometimes even delivered by her adorable pup!)[51].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Florist</span></td>
+                                    <td class="font-medium text-stone-900">AM Florals<br><a class="text-xs text-amber-700 underline" href="amfloralstudio.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Allycia is praised for versatility – from simple and elegant to bold and impactful arrangements. Venue staff and brides are “always thrilled” with how her florals make the space look its best[52].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Live Music</span></td>
+                                    <td class="font-medium text-stone-900">Kimberley Dunn<br><a class="text-xs text-amber-700 underline" href="kimberleydunn.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (contact)</span></td>
+                                    <td class="px-6 py-4">An incredibly talented pianist/vocalist – described as having an “angelic voice” that guests talk about for months[53]. Clients say her performances create an elegant, heartwarming atmosphere.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Live Music</span></td>
+                                    <td class="font-medium text-stone-900">Luxe Duo<br><a class="text-xs text-amber-700 underline" href="luxeduo.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">A violin-and-cello duo blending classical and contemporary. Reviews love that they make classical music “not boring” – fun, modern vibe and superb talent[54]. Perfect for ceremonies/cocktails.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Live Music</span></td>
+                                    <td class="font-medium text-stone-900">Duo d’Amore<br><a class="text-xs text-amber-700 underline" href="duodamore.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Packages available</span></td>
+                                    <td class="px-6 py-4">Popular string ensemble for ceremonies. Praised for graceful, elegant music that complements venues like Le Belvédère’s natural setting[55]. Reliable and easy to work with.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Live Music</span></td>
+                                    <td class="font-medium text-stone-900">Sway Band<br><a class="text-xs text-amber-700 underline" href="swaybandottawa.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">A lively cover band perfect for receptions. Couples say Sway Band brings “amazing energy” – great covers that get everyone dancing. Considered a fun alternative to a DJ for an “awesome party” vibe[56].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Live Music</span></td>
+                                    <td class="font-medium text-stone-900">Davey Lawlor<br><a class="text-xs text-amber-700 underline" href="daveylawlorlive.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Solo singer-guitarist with a relaxed, folksy style. Known for creating a warm ambiance during ceremonies or cocktail hour. Clients appreciate his soulful voice and personable approach.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Officiant</span></td>
+                                    <td class="font-medium text-stone-900">Merry Fairy Weddings<br><a class="text-xs text-amber-700 underline" href="merryfairyweddings.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Packages available</span></td>
+                                    <td class="px-6 py-4">Bilingual (English/French) officiant Catherine is praised for personalized ceremonies (even fun “Frenglish” mixes). Couples love her warm, flexible approach and say she offers exactly what they need – from simple paperwork to a full custom ceremony[57].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Officiant</span></td>
+                                    <td class="font-medium text-stone-900">All Seasons Weddings<br><a class="text-xs text-amber-700 underline" href="allseasonsweddings.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Ceremony fee ranges</span></td>
+                                    <td class="px-6 py-4">Large network of officiants. Highly reputable – couples report All Seasons made it easy to find an officiant whose style matched their vision. Hundreds of 5★ reviews cite professional and meaningful ceremonies.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Officiant</span></td>
+                                    <td class="font-medium text-stone-900">Exceptional Ceremonies<br><a class="text-xs text-amber-700 underline" href="exceptionalceremonies.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Husband-and-wife team (Lynn and Keith) known for unique, personalized ceremonies. Clients frequently mention their humor and warmth – “felt like part of the family” and made guests laugh at perfect moments[58].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photobooth</span></td>
+                                    <td class="font-medium text-stone-900">MDRN Photobooth<br><a class="text-xs text-amber-700 underline" href="mdrnphotoboothcompany.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Packages available</span></td>
+                                    <td class="px-6 py-4">A premium photo booth service. Clients love the sleek setups and fun props – high-quality photos and professional attendants. Many mention MDRN as a “highlight of the reception” for guests.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photobooth</span></td>
+                                    <td class="font-medium text-stone-900">Lexibooth<br><a class="text-xs text-amber-700 underline" href="lexiphotobooth.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Open-concept booth with creative backdrops. Reviews praise Lexibooth’s easy setup and how guests of all ages had a blast. Known for great customer service and customizable photo templates – “lots of laughs and memories” created.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Union Eleven<br><a class="text-xs text-amber-700 underline" href="unioneleven.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Collections by request</span></td>
+                                    <td class="px-6 py-4">A top-tier studio – admired for capturing “perfect candid moments” and delivering creative, magazine-quality shots[60]. Clients often comment on their professionalism and ability to put couples at ease.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photo/Video</span></td>
+                                    <td class="font-medium text-stone-900">Grey Loft Studio<br><a class="text-xs text-amber-700 underline" href="greyloftstudio.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Photo/video packages</span></td>
+                                    <td class="px-6 py-4">Husband-and-wife team offering both photo and video. Loved for their light, airy style and fun personalities – “always up for an adventure”. Numerous couples mention feeling like friends, not just clients[61].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Rob Lloyd<br><a class="text-xs text-amber-700 underline" href="roblloyd.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Documentary-style photographer with a film/editorial flair. Reviews highlight Rob’s calming presence and talent for capturing genuine moments – couples “love his personal style” and feel relaxed on camera[62].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Anita Peeples<br><a class="text-xs text-amber-700 underline" href="anitapeeples.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Anita’s clients adore her blend of perfect portraits and goofy candids. Described as fun and creative, making everyone comfortable. Many remark that she “captures everything to perfection” while keeping things light[63].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Lauren McCormick<br><a class="text-xs text-amber-700 underline" href="laurenmccormickphotography.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Known for her bubbly, adventurous spirit. Couples say Lauren’s enthusiasm is infectious – she makes the day fun and stress-free. Frequently praised for her beautiful use of natural light and cheerful professionalism[64].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Rubicon Photography<br><a class="text-xs text-amber-700 underline" href="rubiconphotography.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">A dynamic duo (wife &amp; husband). Documentarian style with a musical flair – relaxed and candid approach. Clients love their energy (famous pre-wedding dance moves!) and how they capture love stories authentically[65].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Grace &amp; Gold Studios<br><a class="text-xs text-amber-700 underline" href="graceandgoldstudios.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">An Ottawa favorite (also behind Le Belvédère’s site imagery). Tracey from G&amp;G is celebrated for her calm, collected presence and “amazing” photos[66]. Brides note her infectious smile and how at ease she makes everyone feel.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Photography</span></td>
+                                    <td class="font-medium text-stone-900">Agatha Rowland<br><a class="text-xs text-amber-700 underline" href="agatharowland.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Contemporary, documentary approach. Clients describe Agatha’s work as organic and true to the day – she captures “hundreds of little moments” that together tell a heartfelt story[67]. Very responsive and detail-oriented.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Planning/Design</span></td>
+                                    <td class="font-medium text-stone-900">Kennedy Events<br><a class="text-xs text-amber-700 underline" href="kennedyevents.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom packages)</span></td>
+                                    <td class="px-6 py-4">Led by Shanon Kennedy. Clients rave about her light-hearted personality and flawless execution – “felt like planning with your BFF”[68]. Highly organized and makes the process enjoyable from start to finish.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Planning/Design</span></td>
+                                    <td class="font-medium text-stone-900">Wedecor (Planning)<br><a class="text-xs text-amber-700 underline" href="wedecor.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">(See Décor above)</span></td>
+                                    <td class="px-6 py-4">(See notes above. In planning/design capacity, Wedecor is known for full-service décor+planning packages. Many couples loved the one-stop convenience, though some reported communication challenges in recent years.)</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Planning</span></td>
+                                    <td class="font-medium text-stone-900">Erica Irwin<br><a class="text-xs text-amber-700 underline" href="ericairwin.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Widely praised for making wedding planning fun and stress-free. Erica’s couples consistently mention her years of experience, vendor connections, and meticulous organization ensuring “everything and everyone is taken care of”[69]. Very hands-on and reassuring.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Stationery</span></td>
+                                    <td class="font-medium text-stone-900">Wishtree Invites<br><a class="text-xs text-amber-700 underline" href="wishtreeinvites.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (custom design)</span></td>
+                                    <td class="px-6 py-4">Invitation design studio. Couples report Wishtree’s team is helpful and creative, delivering trendy, beautiful invites that are informative and functional[70]. Known for great attention to detail and personalizing stationery to each couple’s theme.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Transportation</span></td>
+                                    <td class="font-medium text-stone-900">417 Bus Line<br><a class="text-xs text-amber-700 underline" href="417busline.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (coach charters)</span></td>
+                                    <td class="px-6 py-4">Provides shuttle and coach services. Generally good feedback for timely, safe service. Some wedding groups noted the buses are clean and drivers are courteous – popular for guest shuttles to venues.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Transportation</span></td>
+                                    <td class="font-medium text-stone-900">Imperial (ITS)<br><a class="text-xs text-amber-700 underline" href="itsottawa.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (limo/transport)</span></td>
+                                    <td class="px-6 py-4">Imperial Transportation Services – known for luxury limos and shuttles. Reviews praise the professional chauffeurs and smooth experience; commonly used for bridal party transportation with high satisfaction.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Transportation</span></td>
+                                    <td class="font-medium text-stone-900">ML Bradley<br><a class="text-xs text-amber-700 underline" href="mlbradley.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found (school buses)</span></td>
+                                    <td class="px-6 py-4">Family-run bus company. Frequently hired for wedding guest transportation (school bus charters) – valued as affordable and reliable. Feedback highlights friendly drivers and on-time service, though buses are basic.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Videography</span></td>
+                                    <td class="font-medium text-stone-900">Jinbon Films<br><a class="text-xs text-amber-700 underline" href="jinbon.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Known for a “simplistic, classy, authentic” style[71]. Couples love how Jin captures candid moments that bring back all the emotions – resulting films are heartfelt and beautifully edited. Very unobtrusive on the day.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Videography</span></td>
+                                    <td class="font-medium text-stone-900">Grey Loft Studio<br><a class="text-xs text-amber-700 underline" href="greyloftstudio.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">See Grey Loft above</span></td>
+                                    <td class="px-6 py-4">(See Grey Loft in Photographers. Their videography is equally praised – clients note their fun, dual photo-video coverage kept things seamless, and videos are “beyond expectations,” capturing all the joy.)[72]</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Videography</span></td>
+                                    <td class="font-medium text-stone-900">Up North Films<br><a class="text-xs text-amber-700 underline" href="letsgoupnorth.com" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Joshua’s films are creative and unique – couples say they “want to watch it over and over.” Highly confident storytelling, blending big moments and tiny details into a compelling wedding film[73]. Great to work with (impresses vendors, too).</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Videography</span></td>
+                                    <td class="font-medium text-stone-900">Palm Tree Studio<br><a class="text-xs text-amber-700 underline" href="palmtreestudio.ca" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not found</span></td>
+                                    <td class="px-6 py-4">Offers cinematic wedding videos. Clients mention beautiful use of music and scenery in their films. Feedback highlights the team’s easygoing nature and how joyfully the wedding day is captured for posterity.</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-stone-50">
+                                    <td class="px-6 py-4"><span class="tag-category">Décor &amp; Rentals</span></td>
+                                    <td class="font-medium text-stone-900">Mastermind Event Rentals<br><a class="text-xs text-amber-700 underline" href="mmecanada.com[1]" target="_blank" rel="noopener">Website</a></td>
+                                    <td class="px-6 py-4"><span class="tag-price">Not Found</span></td>
+                                    <td class="px-6 py-4">Clients praise Mastermind for its fantastic recommendations, cost-effective solutions, prompt communication, and total professionalism – “you can tell they love what they do”[5]. Reviews often highlight the team’s impeccable service and willingness to go above and beyond[6].</td>
+                                    <td class="px-6 py-4">
+                                        <select class="status-select status-researching" onchange="window.updateStatusColor(this)"><option value="researching" selected>Researching</option><option value="contacted" >Contacted</option><option value="quote" >Quote Rec'd</option><option value="selected" >Selected</option><option value="booked" >Booked</option></select>
                                     </td>
                                 </tr>
                             </tbody>
@@ -740,318 +1106,34 @@
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-stone-100">
                     <div class="flex justify-between items-center mb-1">
                         <h2 class="text-2xl font-bold text-stone-800">Meeting Notes</h2>
-                        <span class="text-xs text-stone-400 italic">Every fortnight — Thursday evenings (India time)</span>
+                        <span class="text-xs text-stone-400 italic">Private notes stay in the planning workbook</span>
                     </div>
-                    <p class="text-sm text-stone-500 mb-6">Udit &amp; Maddie fortnightly planning catch-ups</p>
+                    <p class="text-sm text-stone-500 mb-6">Public-safe agenda items only. Detailed family notes, measurements, travel details, and private decisions should stay out of GitHub.</p>
 
-                    <!-- Meeting: 18 March 2026 -->
-                    <div class="border border-amber-200 rounded-xl overflow-hidden mb-6">
-                        <div class="bg-amber-50 px-6 py-4 flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-bold text-amber-800">Thursday, 20 March 2026</h3>
-                                <p class="text-xs text-amber-600 mt-0.5">Tonight's Meeting — Agenda &amp; Status</p>
-                            </div>
-                            <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Tonight</span>
+                    <div class="border border-stone-200 rounded-xl overflow-hidden">
+                        <div class="bg-stone-50 px-6 py-4">
+                            <h3 class="text-lg font-bold text-stone-800">Current Planning Agenda</h3>
+                            <p class="text-xs text-stone-500 mt-0.5">Generated from public-safe integration priorities</p>
                         </div>
                         <div class="divide-y divide-stone-100">
-
-                            <!-- Item 1 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">Finalisation of travel dates</p>
-                                    <p class="text-sm text-stone-500 mt-0.5">Udit to send link for purchase of tickets.</p>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Udit Working On It
-                                    </div>
-                                </div>
+                            <div class="px-6 py-4">
+                                <p class="font-semibold text-stone-800">Reconcile guest count</p>
+                                <p class="text-sm text-stone-500 mt-0.5">GitHub fallback shows 109 guests; planner summary shows 115 guests.</p>
                             </div>
-
-                            <!-- Item 2 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-rose-100 text-rose-700 text-xs font-bold flex items-center justify-center">2</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">Lehenga, Sherwani — Finalisation of measurement &amp; design</p>
-
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-3 mb-1">🌸 Bridal Lehenga (Day 3)</p>
-                                    <p class="text-sm text-stone-500">Maddie's selection:</p>
-                                    <a href="https://www.snusha.com/collections/bridal-lehenga/products/ruby-royale-opulence-lehenga" target="_blank" class="inline-block mt-1 text-sm text-amber-700 underline font-medium break-all hover:text-amber-900">Ruby Royale Opulence Lehenga – Snusha ↗</a>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Pending: Blouse colour confirmation (red or gold) — messaged on business WhatsApp
-                                    </div>
-
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-4 mb-1">💃 Sangeet Outfit (Day 2)</p>
-                                    <p class="text-sm text-stone-500">Maddie's selection:</p>
-                                    <a href="https://www.faizasaqlain.pk/products/pinar" target="_blank" class="inline-block mt-1 text-sm text-amber-700 underline font-medium break-all hover:text-amber-900">Pinar – Faiza Saqlain ↗</a>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Selected ✓
-                                    </div>
-                                </div>
+                            <div class="px-6 py-4">
+                                <p class="font-semibold text-stone-800">Confirm Day 2 venue and rain plan</p>
+                                <p class="text-sm text-stone-500 mt-0.5">Needed before publishing guest-facing logistics.</p>
                             </div>
-
-                            <!-- Item 3 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">3</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">Bridesmaid dresses finalisation</p>
-                                    <p class="text-sm text-stone-500 mt-0.5">To be purchased from Myntra / India.</p>
-
-                                    <!-- Day 2 options -->
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-4 mb-2">👗 Day 2 (12th) — Options</p>
-                                    <div class="space-y-2">
-                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
-                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Kailey's Pick</p>
-                                            <a href="https://www.myntra.com/lehenga-choli/suppar+sleave/suppar-sleave-embellished-mirror-work-semi-stitched-lehenga--blouse-with-dupatta/38959259/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Suppar Sleave Mirror Work Lehenga – Myntra ↗</a>
-                                        </div>
-                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
-                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maybe for Ashley?</p>
-                                            <a href="https://www.myntra.com/lehenga-choli/panchhi/panchhi-embellished-sequinned-semi-stitched-lehenga--unstitched-blouse-with-dupatta/38433905/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Panchhi Sequinned Lehenga – Myntra ↗</a>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Kailey will browse Myntra &amp; share options for bridesmaids to shortlist
-                                    </div>
-
-                                    <!-- Day 3 options -->
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">👗 Day 3 (13th) — Options</p>
-                                    <div class="space-y-2">
-                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
-                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maybe all bridesmaids?</p>
-                                            <a href="https://www.myntra.com/lehenga-choli/ethnic+plus/ethnic-plus-embellished-sequinned-semi-stitched-lehenga--blouse-with-dupatta/39002479/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Ethnic Plus Sequinned Lehenga – Myntra ↗</a>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Under Consideration
-                                    </div>
-
-                                    <!-- Measurements -->
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">📐 Measurements (Bust / Waist / Hips — inches)</p>
-                                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
-                                        <p class="text-xs text-amber-700 font-semibold">⚠️ Remeasure all bridesmaids — current measurements may not be accurate. Note: blouse measurements differ from lehenga measurements.</p>
-                                    </div>
-                                    <div class="overflow-x-auto rounded-lg border border-stone-200">
-                                        <table class="w-full text-sm text-left">
-                                            <thead>
-                                                <tr class="bg-stone-100 text-stone-600 text-xs uppercase">
-                                                    <th class="px-4 py-2 font-semibold">Name</th>
-                                                    <th class="px-4 py-2 font-semibold text-center">Bust</th>
-                                                    <th class="px-4 py-2 font-semibold text-center">Waist</th>
-                                                    <th class="px-4 py-2 font-semibold text-center">Hips</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-stone-100">
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kailey</td><td class="px-4 py-2 text-center text-stone-600">42</td><td class="px-4 py-2 text-center text-stone-600">36</td><td class="px-4 py-2 text-center text-stone-600">48</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Natalie</td><td class="px-4 py-2 text-center text-stone-600">38</td><td class="px-4 py-2 text-center text-stone-600">34</td><td class="px-4 py-2 text-center text-stone-600">39</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kendra</td><td class="px-4 py-2 text-center text-stone-600">41</td><td class="px-4 py-2 text-center text-stone-600">36</td><td class="px-4 py-2 text-center text-stone-600">40</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Ashley</td><td class="px-4 py-2 text-center text-stone-600">47</td><td class="px-4 py-2 text-center text-stone-600">46</td><td class="px-4 py-2 text-center text-stone-600">51</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Christine</td><td class="px-4 py-2 text-center text-stone-600">42</td><td class="px-4 py-2 text-center text-stone-600">40</td><td class="px-4 py-2 text-center text-stone-600">43</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- Colour Preferences -->
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">🎨 Colour Preferences — Day 2 (12th)</p>
-                                    <div class="overflow-x-auto rounded-lg border border-stone-200">
-                                        <table class="w-full text-sm text-left">
-                                            <thead>
-                                                <tr class="bg-stone-100 text-stone-600 text-xs uppercase">
-                                                    <th class="px-4 py-2 font-semibold">Name</th>
-                                                    <th class="px-4 py-2 font-semibold">Preferred Colours</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-stone-100">
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kailey</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Teal, Green, Burgundy</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Natalie</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Burgundy</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Kendra</td><td class="px-4 py-2 text-stone-600">Magenta, Blue, Teal, Green</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Ashley</td><td class="px-4 py-2 text-stone-600">Orange, Blue, Teal</td></tr>
-                                                <tr class="hover:bg-stone-50"><td class="px-4 py-2 font-medium text-stone-800">Christine</td><td class="px-4 py-2 text-stone-600">Blue, Green, Burgundy</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <p class="text-xs text-stone-400 italic mt-2">💡 Common colour across all 5: <span class="font-semibold text-blue-600">Blue</span></p>
-
-                                    <!-- Jewellery -->
-                                    <p class="text-xs font-bold text-stone-500 uppercase mt-5 mb-2">💎 Bridesmaid Jewellery Gift (from Maddie)</p>
-                                    <div class="space-y-2">
-                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
-                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Necklace Set ✓ Good option</p>
-                                            <a href="https://www.myntra.com/jewellery-set/rubans/rubans-22k-gold-plated-brass-emerald-ruby-pink-kundan--cz-stone-traditional-necklace-set/24947008/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Rubans 22K Gold Plated Kundan &amp; CZ Necklace Set – Myntra ↗</a>
-                                            <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Shortlisted
-                                            </div>
-                                        </div>
-                                        <div class="bg-stone-50 rounded-lg p-3 border border-stone-200">
-                                            <p class="text-xs font-semibold text-rose-700 mb-0.5">Maang Tikka — check with Udit's mom first</p>
-                                            <a href="https://www.myntra.com/head-jewellery/rubans/rubans-22kt-gold-plated-cubic-zirconia--american-diamond-maang-tikka-head-jewellery/30453677/buy" target="_blank" class="text-sm text-amber-700 underline font-medium hover:text-amber-900">Rubans 22K Gold Plated CZ &amp; American Diamond Maang Tikka – Myntra ↗</a>
-                                            <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ⏳ Pending: Confirm with Udit's mom if bridesmaids should wear tikka
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="px-6 py-4">
+                                <p class="font-semibold text-stone-800">Confirm Day 3 ceremony start time</p>
+                                <p class="text-sm text-stone-500 mt-0.5">Coordinate venue timing, photo coverage, and ceremony flow.</p>
                             </div>
-
-                            <!-- Item 4 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">4</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">Finalisation of articles to be brought from India</p>
-                                    <p class="text-sm text-stone-500 mt-0.5">Compile the full list of items to carry from India.</p>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-stone-100 text-stone-500 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> To Discuss
-                                    </div>
-                                </div>
+                            <div class="px-6 py-4">
+                                <p class="font-semibold text-stone-800">Review vendor research queue</p>
+                                <p class="text-sm text-stone-500 mt-0.5">Publish only vendor names, websites, high-level estimates, statuses, and public notes.</p>
                             </div>
-
-                            <!-- Item 5 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center">5</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">Finalisation of all ceremonies &amp; traditions (Canada)</p>
-                                    <p class="text-sm text-stone-500 mt-0.5">Full breakdown by day — shared by Udit.</p>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Shared ✓
-                                    </div>
-
-                                    <!-- LEGAL SIGNING (TBD) -->
-                                    <div class="mt-5 border border-amber-200 rounded-lg overflow-hidden">
-                                        <div class="bg-amber-50 px-4 py-2 flex items-center justify-between">
-                                            <p class="text-xs font-bold text-amber-800 uppercase tracking-wide">Legal Signing — Ontario Wedding (Date TBD)</p>
-                                            <span class="bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">DECISION PENDING</span>
-                                        </div>
-                                        <div class="px-4 py-3 text-sm text-stone-600 space-y-2">
-                                            <p>The legal signing will be done under <span class="font-semibold">Ontario</span> (not Quebec), so it will <span class="font-semibold">not</span> take place at Le Belvédère.</p>
-                                            <p class="font-semibold text-stone-700 mt-2">Two options under consideration:</p>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                                                <div class="bg-white border border-stone-200 rounded-lg p-3">
-                                                    <p class="text-xs font-bold text-blue-700 uppercase mb-1">Option A — On the 12th</p>
-                                                    <p class="text-xs text-stone-500">Full setup at the Haldi/Mehendi venue with all guests present. Logistics are more complex (officiant, paperwork, setup).</p>
-                                                </div>
-                                                <div class="bg-white border border-stone-200 rounded-lg p-3">
-                                                    <p class="text-xs font-bold text-rose-700 uppercase mb-1">Option B — Before the 12th (Elopement)</p>
-                                                    <p class="text-xs text-stone-500">Intimate elopement at a park or scenic location with just immediate family &amp; close friends. Simpler logistics.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- DAY 2: 12TH -->
-                                    <div class="mt-4 border border-stone-200 rounded-lg overflow-hidden">
-                                        <div class="bg-stone-800 px-4 py-2">
-                                            <p class="text-xs font-bold text-white uppercase tracking-wide">Day 2 — Monday, October 12 · Haldi &amp; Mehendi</p>
-                                        </div>
-                                        <div class="px-4 py-3">
-                                            <div class="relative border-l-2 border-amber-300 ml-2 space-y-4">
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-amber-700 uppercase">Morning</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Haldi Ceremony</p>
-                                                    <p class="text-xs text-stone-500">Turmeric ceremony with family. Location TBD.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-stone-300 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-stone-500 uppercase">Midday</p>
-                                                    <p class="text-sm text-stone-700">Break / Downtime</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-amber-700 uppercase">Afternoon / Evening</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Mehendi + Music &amp; Gathering</p>
-                                                    <p class="text-xs text-stone-500">Mehendi application, music, food, casual celebration vibe. Everyone together.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- DAY 3: 13TH -->
-                                    <div class="mt-4 border border-stone-200 rounded-lg overflow-hidden">
-                                        <div class="bg-stone-800 px-4 py-2">
-                                            <p class="text-xs font-bold text-white uppercase tracking-wide">Day 3 — Tuesday, October 13 · Le Belvédère — Hindu Ceremony &amp; Reception</p>
-                                        </div>
-                                        <div class="px-4 py-3">
-                                            <div class="relative border-l-2 border-rose-300 ml-2 space-y-4">
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-rose-700 uppercase">9:00 AM — Getting Ready</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Arrive at Le Belvédère — Separate houses</p>
-                                                    <p class="text-xs text-stone-500">Bride's party → Garden House (hair &amp; makeup stations, kitchenette, 200ft from main). Groom's party → Guest House (check-in 1pm, sleeps 6-10, 500ft from main).</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-rose-700 uppercase">First Looks &amp; Photos</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Bride &amp; Groom first look + pre-ceremony portraits</p>
-                                                    <p class="text-xs text-stone-500">Union Eleven (photographer &amp; videographer — booked). Stunning Gatineau Hills backdrop.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-rose-700 uppercase">Hindu Ceremony</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Ceremony on the cliffside terrace (or cozy indoor room)</p>
-                                                    <p class="text-xs text-stone-500">Venue includes state-of-the-art sound system, podium, wireless mic. Mandap TBD (Arie?).</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-amber-700 uppercase">Cocktail Hour</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Outdoor deck — guests mingle, canapés &amp; drinks</p>
-                                                    <p class="text-xs text-stone-500">5 canapés/person included. Bar opens after ceremony (wine package included). Outdoor lounge seating, background music. Great opportunity for family photos while guests enjoy cocktails.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-amber-700 uppercase">Golden Hour</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Sunset shots — bride &amp; groom</p>
-                                                    <p class="text-xs text-stone-500">The Belvédère hilltop is perfect for sunset photos over the Gatineau valley.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-rose-700 uppercase">Dinner</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Gourmet 3-course meal — wine service throughout</p>
-                                                    <p class="text-xs text-stone-500">Menu to be selected 60 days prior (online form). Includes: 4 mains (2 protein, 1 veggie, 1 vegan), soup or salad, dessert. Coffee &amp; tea service. White chiavari chairs, floor-length linen, coloured napkins.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-rose-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-rose-700 uppercase">10:00 – 11:30 PM</p>
-                                                    <p class="text-sm text-stone-700 font-semibold">Late-night station + Dance Party</p>
-                                                    <p class="text-xs text-stone-500">1 late-night food station included. Multi-coloured LED lighting on dancefloor. DJ/band needed (TBD). Outdoor campfire lit after dinner (weather permitting). Shots available after 9pm.</p>
-                                                </div>
-                                                <div class="pl-5 relative">
-                                                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-stone-400 border-2 border-white"></span>
-                                                    <p class="text-xs font-bold text-stone-500 uppercase">Overnight</p>
-                                                    <p class="text-sm text-stone-700">Guest House — 6-10 guests, checkout 10am next day</p>
-                                                    <p class="text-xs text-stone-500">3 units, full washrooms, kitchenette. No noise after 1am.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Venue key facts -->
-                                    <div class="mt-4 bg-stone-50 border border-stone-200 rounded-lg p-4">
-                                        <p class="text-xs font-bold text-stone-600 uppercase mb-2">Le Belvédère — Key Facts from Package</p>
-                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-                                            <div><p class="text-lg font-bold text-stone-800">$149</p><p class="text-[10px] text-stone-500 uppercase">/guest (Oct, 75 min)</p></div>
-                                            <div><p class="text-lg font-bold text-stone-800">109</p><p class="text-[10px] text-stone-500 uppercase">Expected Guests</p></div>
-                                            <div><p class="text-lg font-bold text-stone-800">9am</p><p class="text-[10px] text-stone-500 uppercase">Garden House Access</p></div>
-                                            <div><p class="text-lg font-bold text-stone-800">$75/hr</p><p class="text-[10px] text-stone-500 uppercase">Early Check-in Fee</p></div>
-                                        </div>
-                                        <p class="text-[10px] text-stone-400 mt-2 text-center">*Prices subject to tax &amp; 15% service. Menu form sent 60 days before. Final planning walk-through the week before.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Item 6 -->
-                            <div class="px-6 py-4 flex items-start gap-4">
-                                <span class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center">6</span>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-stone-800">General progress update</p>
-                                    <p class="text-sm text-stone-500 mt-0.5">Each person to share updates on what's been done since last meeting.</p>
-                                    <div class="mt-2 inline-flex items-center gap-1.5 bg-stone-100 text-stone-500 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> To Discuss
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
-                    <!-- Future meetings will appear here -->
-                    <p class="text-center text-xs text-stone-400 italic">Past meetings will be archived below as they're completed.</p>
                 </div>
             </div>
 
@@ -1087,7 +1169,7 @@
                 <button onclick="document.getElementById('csvInput').click()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2 px-4 rounded flex items-center transition">
                     <span class="mr-2">📂</span> Update from Excel
                 </button>
-                <span id="upload-status" class="text-xs text-stone-400 italic">Supports: Guests.csv, Budget.csv, Checklist.csv</span>
+                <span id="upload-status" class="text-xs text-stone-400 italic">Supports: Guests.csv, Checklist.csv, Vendors_Public.csv</span>
             </div>
         </div>
     </footer>
@@ -1151,7 +1233,7 @@
         const defaultData = {
             tasks: {
                 udit: [
-                    { id: 'u1', text: "Set Budget", done: true },
+                    { id: 'u1', text: "Set Planning Priorities", done: true },
                     { id: 'u2', text: "Select Dates", done: true },
                     { id: 'u3', text: "Create a separate Wedding Email", done: true },
                     { id: 'u4', text: "Schedule Venue Tours", done: true },
@@ -1197,12 +1279,14 @@
                     { id: 'j12', text: "Hotel Room Block for Guests?", done: false }
                 ]
             },
-            guestCount: 109,
-            budget: { total: 36567, spent: 7000 }
+            guestCount: 109
         };
 
         // GLOBAL STATE
         let currentState = defaultData;
+        let publicWeddingData = null;
+        let publicVendors = [];
+        let publicChecklist = [];
 
         // --- DOM ELEMENTS ---
         const views = {
@@ -1229,7 +1313,6 @@
         // --- CHART INSTANCES ---
         let taskChartInstance = null;
         let photoChartInstance = null;
-        let budgetChartInstance = null;
 
         // --- FIREBASE LOGIC ---
 
@@ -1244,8 +1327,6 @@
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     currentState = docSnap.data();
-                    if(!currentState.budget) currentState.budget = {total: 36567, spent: 7000};
-                    
                     syncStatusEl.innerText = "Synced";
                     syncStatusEl.classList.remove('text-stone-400');
                     syncStatusEl.classList.add('text-emerald-500');
@@ -1295,15 +1376,6 @@
             }
         }
 
-        async function saveBudgetToFirebase() {
-            syncStatusEl.innerText = "Saving...";
-            try {
-                await updateDoc(docRef, { budget: currentState.budget });
-            } catch (e) {
-                console.error("Error saving budget", e);
-            }
-        }
-
         // --- EXCEL SYNC LOGIC ---
         window.handleCsvUpload = function(files) {
             if (!files.length) return;
@@ -1331,45 +1403,266 @@
                             }
                         } catch (err) { console.error("Guest parse error", err); }
                     }
-                    if (file.name.includes("Budget")) {
-                        try {
-                            const lines = text.split('\n');
-                            let total = 0;
-                            let spent = 0;
-                            lines.forEach(line => {
-                                if (line.includes("Total Budget")) {
-                                    const raw = line.split(',')[2] || ""; 
-                                    total = parseInt(raw.replace(/[^0-9]/g, '')) || 0;
-                                }
-                                if (line.includes("TOTAL SPENT")) {
-                                    const matches = line.match(/\$[0-9,]+/);
-                                    if(matches) spent = parseInt(matches[0].replace(/[^0-9]/g, '')) || 0;
-                                }
-                            });
-                            if (total > 0) {
-                                currentState.budget = { total, spent };
-                                saveBudgetToFirebase();
-                                statusEl.innerText = `Updated Budget: $${spent} / $${total}`;
-                            }
-                        } catch (err) { console.error("Budget parse error", err); }
-                    }
                 };
                 reader.readAsText(file);
             });
         };
 
+        // --- STATIC DATA INTEGRATION ---
+        function getDataPaths(fileName) {
+            const projectPath = window.location.pathname.startsWith('/wedding/') ? '/wedding/data/' : '/data/';
+            return [`data/${fileName}`, `./data/${fileName}`, `${projectPath}${fileName}`];
+        }
+
+        async function fetchFirstAvailable(fileName, parser) {
+            for (const path of getDataPaths(fileName)) {
+                try {
+                    const response = await fetch(path, { cache: 'no-store' });
+                    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+                    return parser(await response.text());
+                } catch (error) {
+                    console.warn(`Could not load ${path}; trying fallback path.`, error);
+                }
+            }
+            return null;
+        }
+
+        function parseCsv(text) {
+            const rows = [];
+            let row = [];
+            let cell = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const next = text[i + 1];
+
+                if (char === '"' && inQuotes && next === '"') {
+                    cell += '"';
+                    i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    row.push(cell);
+                    cell = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && next === '\n') i++;
+                    row.push(cell);
+                    if (row.some(value => value.trim() !== '')) rows.push(row);
+                    row = [];
+                    cell = '';
+                } else {
+                    cell += char;
+                }
+            }
+
+            if (cell || row.length) {
+                row.push(cell);
+                if (row.some(value => value.trim() !== '')) rows.push(row);
+            }
+
+            const headers = (rows.shift() || []).map(header => header.trim());
+            return rows.map(values => headers.reduce((record, header, index) => {
+                record[header] = (values[index] || '').trim();
+                return record;
+            }, {}));
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        async function loadStaticPlannerFiles() {
+            const [jsonData, vendors, checklist] = await Promise.all([
+                fetchFirstAvailable('public-wedding-data.json', text => JSON.parse(text)),
+                fetchFirstAvailable('Vendors_Public.csv', parseCsv),
+                fetchFirstAvailable('Checklist.csv', parseCsv)
+            ]);
+
+            publicWeddingData = jsonData;
+            publicVendors = vendors || [];
+            publicChecklist = checklist || [];
+
+            if (publicWeddingData) {
+                window.weddingPlannerData = publicWeddingData;
+                applyPublicDataToState(publicWeddingData);
+            }
+            if (publicChecklist.length) applyChecklistToState(publicChecklist);
+
+            renderPublicData();
+            renderApp();
+        }
+
+        function applyPublicDataToState(data) {
+            const guestTotal = Number(data?.guest_summary?.total_guests_google_sheet);
+            if (guestTotal) currentState.guestCount = guestTotal;
+
+        }
+
+        function applyChecklistToState(rows) {
+            const visibleRows = rows.filter(row => row.website_display === 'yes');
+            if (!visibleRows.length) return;
+
+            const tasks = { udit: [], maddie: [], joint: [] };
+            visibleRows.forEach((row, index) => {
+                const ownerText = (row.owner || '').toLowerCase();
+                const bucket = ownerText.includes('maddie') && !ownerText.includes('udit')
+                    ? 'maddie'
+                    : ownerText.includes('udit') && !ownerText.includes('maddie')
+                        ? 'udit'
+                        : 'joint';
+                const done = /done|complete|booked|selected/i.test(row.status || '');
+                const meta = [row.section, row.priority, row.due_date].filter(Boolean).join(' | ');
+                tasks[bucket].push({
+                    id: `csv-${bucket}-${index}`,
+                    text: `${row.task}${meta ? ` (${meta})` : ''}`,
+                    done
+                });
+            });
+
+            currentState.tasks = tasks;
+        }
+
+        function renderPublicData() {
+            if (publicWeddingData) {
+                renderPlanningOverview(publicWeddingData);
+                renderGuestSummary(publicWeddingData.guest_summary);
+                renderIntegrationFlags(publicWeddingData);
+                renderTimeline('day2-timeline', publicWeddingData.day2_timeline, 'amber');
+                renderTimeline('day3-timeline', publicWeddingData.day3_timeline_draft, 'rose');
+            }
+            if (publicVendors.length) renderVendorTable(publicVendors);
+        }
+
+        function renderPlanningOverview(data) {
+            const container = document.getElementById('planning-overview-cards');
+            if (!container) return;
+            Array.from(container.children).forEach(child => {
+                if (!child.dataset.publicCard && !child.querySelector('#taskChart')) child.classList.add('hidden');
+            });
+            const cards = [
+                { title: `Day 1: ${data.dates?.day1_legal?.label || 'The Signing'}`, text: `Status: ${data.dates?.day1_legal?.status || 'Planning'}. Date: ${data.dates?.day1_legal?.date || 'TBD'}.`, color: 'emerald' },
+                { title: `Day 2: ${data.dates?.day2_culture?.label || 'The Party'}`, text: `Status: ${data.dates?.day2_culture?.status || 'Logistics heavy'}. ${currentState.guestCount} guests expected.`, color: 'amber' },
+                { title: `Day 3: ${data.dates?.day3_ceremony?.label || 'The Big Day'}`, text: `Status: ${data.dates?.day3_ceremony?.status || 'Vendor booking'}. ${data.dates?.day3_ceremony?.location || 'Location TBD'}.`, color: 'rose' }
+            ];
+
+            container.querySelectorAll('[data-public-card="true"]').forEach(card => card.remove());
+            const completionPulse = document.getElementById('taskChart')?.closest('div.bg-white');
+            cards.forEach(card => {
+                const div = document.createElement('div');
+                div.dataset.publicCard = 'true';
+                div.className = `p-4 bg-${card.color}-50 border-l-4 border-${card.color}-500 rounded-r-lg`;
+                div.innerHTML = `<h4 class="font-bold text-${card.color}-800"></h4><p class="text-sm text-${card.color}-700 mt-1"></p>`;
+                div.querySelector('h4').textContent = card.title;
+                div.querySelector('p').textContent = card.text;
+                container.insertBefore(div, completionPulse);
+            });
+        }
+
+        function renderGuestSummary(summary) {
+            const container = document.getElementById('guest-summary');
+            if (!container || !summary) return;
+            const items = [
+                ['Planner Guests', summary.total_guests_google_sheet],
+                ['Confirmed', summary.confirmed],
+                ['Adults', summary.adults],
+                ['Children', summary.children],
+                ['Need Lodging', summary.accommodation_needed]
+            ];
+            container.innerHTML = items.map(([label, value]) => `
+                <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 text-center">
+                    <div class="text-xl font-bold text-stone-800">${value ?? 'TBD'}</div>
+                    <div class="text-xs text-stone-500 uppercase">${label}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderIntegrationFlags(data) {
+            const container = document.getElementById('planner-warnings');
+            if (!container) return;
+            const summary = data.guest_summary || {};
+            const warnings = [...(data.integration_flags || [])];
+            if (summary.reconciliation_required && summary.total_guests_google_sheet !== summary.total_guests_github_current) {
+                warnings.unshift(`Planner/admin warning: GitHub currently shows ${summary.total_guests_github_current} guests; planner data shows ${summary.total_guests_google_sheet} guests.`);
+            }
+            container.innerHTML = [...new Set(warnings)].map(warning => `<div class="admin-warning">${warning}</div>`).join('');
+        }
+
+        function renderTimeline(containerId, items = [], color = 'amber') {
+            const container = document.getElementById(containerId);
+            if (!container || !items.length) return;
+            const textColor = color === 'rose' ? 'text-rose-700' : 'text-amber-700';
+            const bgColor = color === 'rose' ? 'bg-rose-100' : 'bg-amber-100';
+            container.innerHTML = '<div class="timeline-line"></div>' + items.map((item, index) => `
+                <div class="timeline-item mb-8 relative w-full">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content w-1/2 ${index % 2 === 0 ? 'ml-auto' : 'mr-auto text-right'}">
+                        <span class="text-xs font-bold ${textColor} ${bgColor} px-2 py-0.5 rounded">${item.time || 'TBD'}</span>
+                        <h4 class="font-bold text-stone-800">${item.title || 'Timeline item'}</h4>
+                        <p class="text-sm text-stone-600">${item.description || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderVendorTable(rows) {
+            const tbody = document.getElementById('vendor-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = rows.map(row => {
+                const status = normalizeVendorStatus(row.status);
+                const website = row.website ? `<br><a class="text-xs text-amber-700 underline" href="${escapeHtml(row.website)}" target="_blank" rel="noopener">Website</a>` : '';
+                return `
+                    <tr class="bg-white border-b hover:bg-stone-50">
+                        <td class="px-6 py-4"><span class="tag-category">${escapeHtml(row.category || 'Vendor')}</span></td>
+                        <td class="font-medium text-stone-900">${escapeHtml(row.vendor || 'TBD')}${website}</td>
+                        <td class="px-6 py-4"><span class="tag-price">${escapeHtml(row.pricing_or_estimate || 'TBD')}</span></td>
+                        <td class="px-6 py-4">${escapeHtml(row.public_notes || row.next_step || '')}</td>
+                        <td class="px-6 py-4">
+                            <select class="status-select status-${status}" onchange="window.updateStatusColor(this)">
+                                ${['researching', 'contacted', 'quote', 'selected', 'booked'].map(option => `<option value="${option}" ${option === status ? 'selected' : ''}>${statusLabel(option)}</option>`).join('')}
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function normalizeVendorStatus(status = '') {
+            const value = status.toLowerCase();
+            if (value.includes('book')) return 'booked';
+            if (value.includes('select')) return 'selected';
+            if (value.includes('quote') || value.includes('backup') || value.includes('need')) return 'quote';
+            if (value.includes('contact')) return 'contacted';
+            return 'researching';
+        }
+
+        function statusLabel(status) {
+            return {
+                researching: 'Researching',
+                contacted: 'Contacted',
+                quote: "Quote Rec'd",
+                selected: 'Selected',
+                booked: 'Booked'
+            }[status] || 'Researching';
+        }
+
         // --- UI RENDER LOGIC ---
         function renderApp() {
+            if (publicWeddingData) applyPublicDataToState(publicWeddingData);
+            if (publicChecklist.length) applyChecklistToState(publicChecklist);
             if (document.activeElement !== guestSlider) {
                 guestSlider.value = currentState.guestCount;
             }
             updateLogisticsUI();
-            if (currentState.budget) {
-                document.getElementById('disp-budget-total').innerText = `$${currentState.budget.total.toLocaleString()}`;
-                document.getElementById('disp-budget-spent').innerText = `$${currentState.budget.spent.toLocaleString()}`;
-            }
             renderTasks();
             updateCharts();
+            renderPublicData();
         }
 
         // --- INIT ---
@@ -1378,7 +1671,8 @@
             setInterval(updateCountdown, 60000);
             initTaskChart();
             initPhotoChart();
-            initBudgetChart();
+            renderApp();
+            loadStaticPlannerFiles();
 
             guestSlider.addEventListener('input', () => {
                 currentState.guestCount = parseInt(guestSlider.value);
@@ -1406,7 +1700,6 @@
 
             if (viewName === 'dashboard') {
                 if(taskChartInstance) taskChartInstance.resize();
-                if(budgetChartInstance) budgetChartInstance.resize();
             }
             if (viewName === 'day1' && photoChartInstance) photoChartInstance.resize();
         };
@@ -1442,6 +1735,7 @@
         function updateLogisticsUI() {
             const count = currentState.guestCount;
             document.getElementById('guest-count-display').innerText = count;
+            document.getElementById('disp-guest-count').innerText = `${count} Guests`;
             document.getElementById('calc-chairs').innerText = count + 10;
             document.getElementById('calc-tables').innerText = Math.ceil(count / 10);
             document.getElementById('calc-biryani').innerText = `${Math.ceil(count * 0.5)} L`;
@@ -1489,10 +1783,6 @@
                 taskChartInstance.data.datasets[0].data = [uTotal - uDone, uDone, mTotal - mDone, mDone, jTotal - jDone, jDone];
                 taskChartInstance.update();
             }
-            if (budgetChartInstance && currentState.budget) {
-                budgetChartInstance.data.datasets[0].data = [currentState.budget.total, currentState.budget.spent];
-                budgetChartInstance.update();
-            }
         }
 
         function updateCountdown() {
@@ -1535,7 +1825,7 @@
                 data: {
                     labels: ['Cost ($)', 'Reliability (1-10)', 'Relaxation (1-10)'],
                     datasets: [
-                        { label: 'Friends (Addy/Ashley)', data: [0, 5, 2], backgroundColor: '#fbbf24' },
+                        { label: 'Friends', data: [0, 5, 2], backgroundColor: '#fbbf24' },
                         { label: 'Pros (Hired)', data: [1500, 10, 10], backgroundColor: '#10b981' }
                     ]
                 },
@@ -1547,29 +1837,6 @@
             });
         }
 
-        function initBudgetChart() {
-             const ctx = document.getElementById('budgetChart').getContext('2d');
-             budgetChartInstance = new Chart(ctx, {
-                 type: 'bar',
-                 data: {
-                     labels: ['Budget', 'Spent'],
-                     datasets: [{
-                         label: 'Amount ($)',
-                         data: [36567, 7000],
-                         backgroundColor: ['#e5e7eb', '#10b981'],
-                         borderRadius: 4
-                     }]
-                 },
-                 options: {
-                     indexAxis: 'y',
-                     responsive: true,
-                     maintainAspectRatio: false,
-                     scales: {
-                         x: { beginAtZero: true, max: 40000 }
-                     }
-                 }
-             });
-        }
     </script>
 </body>
 </html>

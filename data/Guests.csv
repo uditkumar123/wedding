@@ -1,0 +1,6 @@
+metric,value,display_label,source,privacy_level,note
+total_guests,115,Total invited/expected guests,Google Sheet Guests tab,public-summary,GitHub currently says 109; reconcile before publishing.
+confirmed_guests,21,Confirmed RSVPs,Google Sheet Guests tab,public-summary,Use for internal dashboard only unless password-gated.
+adults,113,Adults,Google Sheet Guests tab,public-summary,Used for venue minimum and meal planning.
+children,2,Children,Google Sheet Guests tab,public-summary,Kids meal count.
+accommodation_needed,5,Guests needing accommodation,Google Sheet Guests/Accommodation tabs,private-summary,Do not publish names or room assignments.

@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "project": "Udit & Maddie Wedding",
+    "generated_on": "2026-05-19",
+    "privacy_note": "Public-safe summary only. Do not add guest emails, phone numbers, addresses, accommodation assignments, or private notes.",
+    "source_of_truth": "Irons and Kumar Wedding Planner Google Sheet + Command Centre workbook",
+    "github_repo": "https://github.com/uditkumar123/wedding"
+  },
+  "dates": {
+    "day1_legal": {
+      "label": "Legal signing",
+      "date": "TBD",
+      "status": "Decision needed"
+    },
+    "day2_culture": {
+      "label": "Haldi, Mehendi & Sangeet",
+      "date": "2026-10-12",
+      "location": "Arnprior / TBD final venue",
+      "status": "Logistics heavy"
+    },
+    "day3_ceremony": {
+      "label": "Hindu ceremony & reception",
+      "date": "2026-10-13",
+      "location": "Le Belvédère, Wakefield QC",
+      "status": "Venue booked"
+    }
+  },
+  "guest_summary": {
+    "total_guests_google_sheet": 115,
+    "total_guests_github_current": 109,
+    "confirmed": 21,
+    "adults": 113,
+    "children": 2,
+    "accommodation_needed": 5,
+    "reconciliation_required": true
+  },
+  "day2_timeline": [
+    {
+      "time": "10:00 AM",
+      "title": "Haldi Ceremony",
+      "description": "Family turmeric ceremony. Keep towels, cleanup station, chai/snacks and elder seating ready."
+    },
+    {
+      "time": "12:00 PM",
+      "title": "Casual Lunch & Cleanup",
+      "description": "Light lunch and cleanup/changeover after Haldi."
+    },
+    {
+      "time": "2:00 PM",
+      "title": "Mehendi Afternoon",
+      "description": "Bridal henna, chai station, snacks and casual games."
+    },
+    {
+      "time": "5:00 PM",
+      "title": "Change & Freshen Up",
+      "description": "Guests change into evening/Sangeet clothes."
+    },
+    {
+      "time": "6:30 PM",
+      "title": "Sangeet Night",
+      "description": "Performances, dinner and dancing."
+    }
+  ],
+  "day3_timeline_draft": [
+    {
+      "time": "9:00 AM",
+      "title": "Getting Ready",
+      "description": "Garden House access for bride's party; Guest House timing to confirm."
+    },
+    {
+      "time": "TBD",
+      "title": "First Look & Photos",
+      "description": "Coordinate with Union Eleven and venue access rules."
+    },
+    {
+      "time": "TBD",
+      "title": "Hindu Ceremony",
+      "description": "Confirm exact start time with Le Belvédère."
+    },
+    {
+      "time": "TBD",
+      "title": "Cocktail Hour",
+      "description": "Canapés, bar and family photos."
+    },
+    {
+      "time": "TBD",
+      "title": "Dinner",
+      "description": "3-course meal; wine service included."
+    },
+    {
+      "time": "10:00–11:30 PM",
+      "title": "Late-night Station + Dance Party",
+      "description": "One late-night station included."
+    }
+  ],
+  "integration_flags": [
+    "Reconcile GitHub 109 guest count with Google Sheet 115 guest count.",
+    "Keep private guest details out of GitHub.",
+    "Confirm Day 3 ceremony time with Le Belvédère because venue contract timing rules matter.",
+    "Review vendor XLS merge queue before publishing vendors."
+  ]
+}
